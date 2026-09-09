@@ -12,7 +12,12 @@ export const createAppointmentSchema = z.object({
   sedeId: z.coerce.number().int().positive("Debe indicar una sede válida"),
 });
 
-export const updateAppointmentSchema = createAppointmentSchema.partial();
+// Nota: sobreescribimos "estado" sin el .default(...) heredado de createAppointmentSchema.
+// Si no lo hiciéramos, una actualización que no envíe "estado" restauraría
+// silenciosamente el valor a "PENDIENTE" por el default de Zod.
+export const updateAppointmentSchema = createAppointmentSchema.partial().extend({
+  estado: estadoCitaEnum.optional(),
+});
 
 export type CreateAppointmentInput = z.infer<typeof createAppointmentSchema>;
 export type UpdateAppointmentInput = z.infer<typeof updateAppointmentSchema>;
