@@ -17,7 +17,11 @@ export const createPetSchema = z.object({
   duenoId: z.coerce.number().int().positive("Debe indicar un dueño válido"),
 });
 
-export const updatePetSchema = createPetSchema.partial();
+// Sobreescribimos "esterilizado" sin el .default(...) para que un update que
+// no lo envíe no restaure silenciosamente el valor a "false".
+export const updatePetSchema = createPetSchema.partial().extend({
+  esterilizado: z.boolean().optional(),
+});
 
 export type CreatePetInput = z.infer<typeof createPetSchema>;
 export type UpdatePetInput = z.infer<typeof updatePetSchema>;

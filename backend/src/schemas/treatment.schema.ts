@@ -13,7 +13,11 @@ export const createTreatmentSchema = z.object({
   mascotaId: z.coerce.number().int().positive("Debe indicar una mascota válida"),
 });
 
-export const updateTreatmentSchema = createTreatmentSchema.partial();
+// Sobreescribimos "estado" sin el .default(...) para que un update que no lo
+// envíe no restaure silenciosamente el tratamiento a "EN_CURSO".
+export const updateTreatmentSchema = createTreatmentSchema.partial().extend({
+  estado: estadoTratamientoEnum.optional(),
+});
 
 export type CreateTreatmentInput = z.infer<typeof createTreatmentSchema>;
 export type UpdateTreatmentInput = z.infer<typeof updateTreatmentSchema>;
