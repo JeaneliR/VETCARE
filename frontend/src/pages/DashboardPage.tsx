@@ -94,7 +94,7 @@ export default function DashboardPage() {
                 </ul>
               )}
               <Link
-                to="/citas"
+                to="/app/citas"
                 className="mt-3 inline-block text-sm font-medium text-brand-600 hover:text-brand-700"
               >
                 Ver todas las citas →
@@ -109,7 +109,7 @@ export default function DashboardPage() {
               </p>
               <p className="mt-1 text-sm text-slate-500">Basado en {summary.totalResenas} reseñas</p>
               <Link
-                to="/resenas"
+                to="/app/resenas"
                 className="mt-3 inline-block text-sm font-medium text-brand-600 hover:text-brand-700"
               >
                 Ver reseñas →
@@ -119,14 +119,14 @@ export default function DashboardPage() {
 
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
             {[
-              { to: "/duenos", label: "Dueños", icon: "👤" },
-              { to: "/mascotas", label: "Mascotas", icon: "🐾" },
-              { to: "/citas", label: "Citas", icon: "📅" },
-              { to: "/vacunas", label: "Vacunas", icon: "💉" },
-              { to: "/tratamientos", label: "Tratamientos", icon: "🩺" },
-              { to: "/banos-cortes", label: "Baños/Cortes", icon: "✂️" },
-              { to: "/sedes", label: "Sedes", icon: "📍" },
-              { to: "/resenas", label: "Reseñas", icon: "⭐" },
+              { to: "/app/duenos", label: "Dueños", icon: "👤" },
+              { to: "/app/mascotas", label: "Mascotas", icon: "🐾" },
+              { to: "/app/citas", label: "Citas", icon: "📅" },
+              { to: "/app/vacunas", label: "Vacunas", icon: "💉" },
+              { to: "/app/tratamientos", label: "Tratamientos", icon: "🩺" },
+              { to: "/app/banos-cortes", label: "Baños/Cortes", icon: "✂️" },
+              { to: "/app/sedes", label: "Sedes", icon: "📍" },
+              { to: "/app/resenas", label: "Reseñas", icon: "⭐" },
             ].map((shortcut) => (
               <Link
                 key={shortcut.to}

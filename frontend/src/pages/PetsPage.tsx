@@ -13,6 +13,7 @@ import { InputField, SelectField, TextareaField } from "../components/FormField"
 import { petsService, PetInput } from "../services/pets.service";
 import { ownersService } from "../services/owners.service";
 import { getErrorMessage } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import { ESPECIE_LABELS, Especie, Owner, Pet, Sexo } from "../types";
 import { toInputDate } from "../utils/format";
 
@@ -31,6 +32,8 @@ const emptyForm: PetInput = {
 };
 
 export default function PetsPage() {
+  const { hasPermission } = useAuth();
+  const canManage = hasPermission("mascotas");
   const [searchParams] = useSearchParams();
   const duenoIdFilter = searchParams.get("duenoId");
 
@@ -143,7 +146,7 @@ export default function PetsPage() {
     {
       header: "Nombre",
       accessor: (p) => (
-        <Link to={`/mascotas/${p.id}`} className="font-medium text-brand-700 hover:underline">
+        <Link to={`/app/mascotas/${p.id}`} className="font-medium text-brand-700 hover:underline">
           {p.nombre}
         </Link>
       ),
@@ -167,7 +170,7 @@ export default function PetsPage() {
             ? `Mostrando mascotas del dueño seleccionado`
             : "Historial y datos de todas las mascotas"
         }
-        action={<Button onClick={openCreate}>+ Nueva mascota</Button>}
+        action={canManage ? <Button onClick={openCreate}>+ Nueva mascota</Button> : undefined}
       />
 
       {error && <Alert message={error} onDismiss={() => setError("")} />}
@@ -184,15 +187,19 @@ export default function PetsPage() {
           rowKey={(p) => p.id}
           actions={(p) => (
             <div className="flex justify-end gap-2">
-              <Link to={`/mascotas/${p.id}`}>
+              <Link to={`/app/mascotas/${p.id}`}>
                 <Button variant="secondary">Ver ficha</Button>
               </Link>
-              <Button variant="secondary" onClick={() => openEdit(p)}>
-                Editar
-              </Button>
-              <Button variant="danger" onClick={() => setToDelete(p)}>
-                Eliminar
-              </Button>
+              {canManage && (
+                <>
+                  <Button variant="secondary" onClick={() => openEdit(p)}>
+                    Editar
+                  </Button>
+                  <Button variant="danger" onClick={() => setToDelete(p)}>
+                    Eliminar
+                  </Button>
+                </>
+              )}
             </div>
           )}
         />

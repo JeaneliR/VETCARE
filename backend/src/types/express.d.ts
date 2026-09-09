@@ -1,0 +1,18 @@
+// Extiende el tipo Request de Express para adjuntar el usuario autenticado.
+import "express";
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: number;
+        nombre: string;
+        email: string;
+        rol: "ADMIN" | "STAFF";
+        permisos: string[];
+      };
+    }
+  }
+}
+
+export {};

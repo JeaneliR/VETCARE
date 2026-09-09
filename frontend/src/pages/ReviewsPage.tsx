@@ -12,6 +12,7 @@ import { reviewsService, ReviewInput } from "../services/reviews.service";
 import { ownersService } from "../services/owners.service";
 import { locationsService } from "../services/locations.service";
 import { getErrorMessage } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import { Location, Owner, Review } from "../types";
 import { formatDate, fullName } from "../utils/format";
 
@@ -23,6 +24,8 @@ const emptyForm: ReviewInput = {
 };
 
 export default function ReviewsPage() {
+  const { hasPermission } = useAuth();
+  const canManage = hasPermission("resenas");
   const [reviews, setReviews] = useState<Review[]>([]);
   const [owners, setOwners] = useState<Owner[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
@@ -128,7 +131,7 @@ export default function ReviewsPage() {
       <PageHeader
         title="Reseñas"
         subtitle="Opiniones de los dueños sobre nuestras sedes"
-        action={<Button onClick={openCreate}>+ Nueva reseña</Button>}
+        action={canManage ? <Button onClick={openCreate}>+ Nueva reseña</Button> : undefined}
       />
 
       {error && <Alert message={error} onDismiss={() => setError("")} />}
@@ -152,14 +155,16 @@ export default function ReviewsPage() {
                 <StarRating value={review.calificacion} />
               </div>
               <p className="mt-3 text-sm text-slate-600">{review.comentario}</p>
-              <div className="mt-3 flex justify-end gap-2">
-                <Button variant="secondary" onClick={() => openEdit(review)}>
-                  Editar
-                </Button>
-                <Button variant="danger" onClick={() => setToDelete(review)}>
-                  Eliminar
-                </Button>
-              </div>
+              {canManage && (
+                <div className="mt-3 flex justify-end gap-2">
+                  <Button variant="secondary" onClick={() => openEdit(review)}>
+                    Editar
+                  </Button>
+                  <Button variant="danger" onClick={() => setToDelete(review)}>
+                    Eliminar
+                  </Button>
+                </div>
+              )}
             </div>
           ))}
         </div>

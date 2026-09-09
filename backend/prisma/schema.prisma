@@ -11,6 +11,40 @@ datasource db {
 }
 
 // ---------------------------------------------------------------------------
+// MODULO: Usuarios del sistema (staff de la veterinaria) y permisos
+// ---------------------------------------------------------------------------
+// rol (String, validado con Zod): ADMIN | STAFF
+// El ADMIN tiene acceso total siempre. Un STAFF solo puede crear/editar/
+// eliminar en los módulos donde tenga una fila en UserPermission; puede
+// VER (GET) todos los módulos para no romper los selects de otras pantallas
+// (ej. elegir una mascota al crear una cita).
+model User {
+  id           Int              @id @default(autoincrement())
+  nombre       String
+  email        String           @unique
+  passwordHash String
+  rol          String           @default("STAFF")
+  activo       Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  permisos     UserPermission[]
+
+  @@map("users")
+}
+
+// modulo: duenos | mascotas | citas | vacunas | tratamientos | grooming | sedes | resenas
+model UserPermission {
+  id     Int    @id @default(autoincrement())
+  userId Int
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  modulo String
+
+  @@unique([userId, modulo])
+  @@map("user_permissions")
+}
+
+// ---------------------------------------------------------------------------
 // MODULO: Dueños (Owners)
 // ---------------------------------------------------------------------------
 model Owner {
@@ -33,26 +67,17 @@ model Owner {
 // ---------------------------------------------------------------------------
 // MODULO: Mascotas (Pets)
 // ---------------------------------------------------------------------------
-enum Especie {
-  PERRO
-  GATO
-  AVE
-  ROEDOR
-  REPTIL
-  OTRO
-}
-
-enum Sexo {
-  MACHO
-  HEMBRA
-}
-
+// Nota: SQLite no soporta el tipo `enum` nativo de Prisma, así que estos
+// campos se guardan como String y se validan en la API con Zod (ver
+// src/schemas/pet.schema.ts). Valores válidos:
+// especie: PERRO | GATO | AVE | ROEDOR | REPTIL | OTRO
+// sexo: MACHO | HEMBRA
 model Pet {
   id              Int      @id @default(autoincrement())
   nombre          String
-  especie         Especie
+  especie         String
   raza            String?
-  sexo            Sexo
+  sexo            String
   fechaNacimiento DateTime?
   peso            Float?
   color           String?
@@ -100,19 +125,13 @@ model Location {
 // ---------------------------------------------------------------------------
 // MODULO: Citas (Appointments)
 // ---------------------------------------------------------------------------
-enum EstadoCita {
-  PENDIENTE
-  CONFIRMADA
-  COMPLETADA
-  CANCELADA
-}
-
+// estado (String, validado con Zod): PENDIENTE | CONFIRMADA | COMPLETADA | CANCELADA
 model Appointment {
   id          Int         @id @default(autoincrement())
   fecha       DateTime
   motivo      String
   veterinario String
-  estado      EstadoCita  @default(PENDIENTE)
+  estado      String      @default("PENDIENTE")
   notas       String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -149,12 +168,7 @@ model Vaccine {
 // ---------------------------------------------------------------------------
 // MODULO: Tratamientos (Treatments)
 // ---------------------------------------------------------------------------
-enum EstadoTratamiento {
-  EN_CURSO
-  FINALIZADO
-  SUSPENDIDO
-}
-
+// estado (String, validado con Zod): EN_CURSO | FINALIZADO | SUSPENDIDO
 model Treatment {
   id            Int               @id @default(autoincrement())
   diagnostico   String
@@ -163,7 +177,7 @@ model Treatment {
   fechaInicio   DateTime
   fechaFin      DateTime?
   veterinario   String
-  estado        EstadoTratamiento @default(EN_CURSO)
+  estado        String            @default("EN_CURSO")
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
 
@@ -176,17 +190,10 @@ model Treatment {
 // ---------------------------------------------------------------------------
 // MODULO: Baños y Cortes (Grooming)
 // ---------------------------------------------------------------------------
-enum TipoServicioGrooming {
-  BANO
-  CORTE
-  BANO_Y_CORTE
-  DESLANADO
-  CORTE_UNAS
-}
-
+// tipoServicio (String, validado con Zod): BANO | CORTE | BANO_Y_CORTE | DESLANADO | CORTE_UNAS
 model Grooming {
   id            Int                  @id @default(autoincrement())
-  tipoServicio  TipoServicioGrooming
+  tipoServicio  String
   fecha         DateTime
   precio        Float
   encargado     String

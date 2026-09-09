@@ -14,7 +14,7 @@ export async function list(req: Request, res: Response) {
     where: {
       ...(mascotaId ? { mascotaId: Number(mascotaId) } : {}),
       ...(sedeId ? { sedeId: Number(sedeId) } : {}),
-      ...(estado ? { estado: String(estado) as never } : {}),
+      ...(estado ? { estado: String(estado) } : {}),
     },
     orderBy: { fecha: "asc" },
     include,

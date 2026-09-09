@@ -11,6 +11,7 @@ import DataTable, { Column } from "../components/DataTable";
 import { InputField, TextareaField } from "../components/FormField";
 import { ownersService, OwnerInput } from "../services/owners.service";
 import { getErrorMessage } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import { Owner } from "../types";
 
 const emptyForm: OwnerInput = {
@@ -23,6 +24,8 @@ const emptyForm: OwnerInput = {
 };
 
 export default function OwnersPage() {
+  const { hasPermission } = useAuth();
+  const canManage = hasPermission("duenos");
   const [owners, setOwners] = useState<Owner[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -119,7 +122,7 @@ export default function OwnersPage() {
     {
       header: "Mascotas",
       accessor: (o) => (
-        <Link to={`/mascotas?duenoId=${o.id}`} className="text-brand-600 hover:underline">
+        <Link to={`/app/mascotas?duenoId=${o.id}`} className="text-brand-600 hover:underline">
           {o._count?.mascotas ?? 0}
         </Link>
       ),
@@ -131,7 +134,7 @@ export default function OwnersPage() {
       <PageHeader
         title="Dueños"
         subtitle="Administra a los clientes de la veterinaria"
-        action={<Button onClick={openCreate}>+ Nuevo dueño</Button>}
+        action={canManage ? <Button onClick={openCreate}>+ Nuevo dueño</Button> : undefined}
       />
 
       {error && <Alert message={error} onDismiss={() => setError("")} />}
@@ -146,16 +149,20 @@ export default function OwnersPage() {
           columns={columns}
           data={owners}
           rowKey={(o) => o.id}
-          actions={(o) => (
-            <div className="flex justify-end gap-2">
-              <Button variant="secondary" onClick={() => openEdit(o)}>
-                Editar
-              </Button>
-              <Button variant="danger" onClick={() => setToDelete(o)}>
-                Eliminar
-              </Button>
-            </div>
-          )}
+          actions={
+            canManage
+              ? (o) => (
+                  <div className="flex justify-end gap-2">
+                    <Button variant="secondary" onClick={() => openEdit(o)}>
+                      Editar
+                    </Button>
+                    <Button variant="danger" onClick={() => setToDelete(o)}>
+                      Eliminar
+                    </Button>
+                  </div>
+                )
+              : undefined
+          }
         />
       )}
 

@@ -2,6 +2,8 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 
+import authRoutes from "./routes/auth.routes";
+import usersRoutes from "./routes/users.routes";
 import ownersRoutes from "./routes/owners.routes";
 import petsRoutes from "./routes/pets.routes";
 import locationsRoutes from "./routes/locations.routes";
@@ -23,6 +25,10 @@ app.use(express.json());
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", service: "vetcare-backend", timestamp: new Date().toISOString() });
 });
+
+// Autenticación y administración de usuarios
+app.use("/api/auth", authRoutes);
+app.use("/api/usuarios", usersRoutes);
 
 // Rutas por módulo
 app.use("/api/duenos", ownersRoutes);

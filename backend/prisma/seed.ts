@@ -1,9 +1,12 @@
 import { PrismaClient } from "@prisma/client";
+import { hashPassword } from "../src/utils/auth";
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log("🌱 Limpiando datos existentes...");
+  await prisma.userPermission.deleteMany();
+  await prisma.user.deleteMany();
   await prisma.review.deleteMany();
   await prisma.grooming.deleteMany();
   await prisma.treatment.deleteMany();
@@ -12,6 +15,44 @@ async function main() {
   await prisma.pet.deleteMany();
   await prisma.owner.deleteMany();
   await prisma.location.deleteMany();
+
+  console.log("👥 Creando usuarios del sistema...");
+  const adminPasswordHash = await hashPassword("admin123");
+  await prisma.user.create({
+    data: {
+      nombre: "Administrador VetCare",
+      email: "admin@vetcare.pe",
+      passwordHash: adminPasswordHash,
+      rol: "ADMIN",
+      // El admin no necesita filas en permisos: siempre tiene acceso total.
+    },
+  });
+
+  const recepcionPasswordHash = await hashPassword("recepcion123");
+  await prisma.user.create({
+    data: {
+      nombre: "Recepción",
+      email: "recepcion@vetcare.pe",
+      passwordHash: recepcionPasswordHash,
+      rol: "STAFF",
+      permisos: {
+        create: [{ modulo: "duenos" }, { modulo: "mascotas" }, { modulo: "citas" }],
+      },
+    },
+  });
+
+  const groomerPasswordHash = await hashPassword("grooming123");
+  await prisma.user.create({
+    data: {
+      nombre: "Peluquería",
+      email: "grooming@vetcare.pe",
+      passwordHash: groomerPasswordHash,
+      rol: "STAFF",
+      permisos: {
+        create: [{ modulo: "grooming" }],
+      },
+    },
+  });
 
   console.log("🏥 Creando sedes...");
   const sedeCentro = await prisma.location.create({
