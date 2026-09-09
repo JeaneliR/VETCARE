@@ -1,0 +1,223 @@
+// Esquema de base de datos - VetCare Manager
+// Curso: Herramienta de Desarrollo (React + TypeScript + Node/Express + Prisma)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// MODULO: Dueños (Owners)
+// ---------------------------------------------------------------------------
+model Owner {
+  id          Int      @id @default(autoincrement())
+  nombres     String
+  apellidos   String
+  dni         String   @unique
+  telefono    String
+  email       String   @unique
+  direccion   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  mascotas    Pet[]
+  resenas     Review[]
+
+  @@map("owners")
+}
+
+// ---------------------------------------------------------------------------
+// MODULO: Mascotas (Pets)
+// ---------------------------------------------------------------------------
+enum Especie {
+  PERRO
+  GATO
+  AVE
+  ROEDOR
+  REPTIL
+  OTRO
+}
+
+enum Sexo {
+  MACHO
+  HEMBRA
+}
+
+model Pet {
+  id              Int      @id @default(autoincrement())
+  nombre          String
+  especie         Especie
+  raza            String?
+  sexo            Sexo
+  fechaNacimiento DateTime?
+  peso            Float?
+  color           String?
+  esterilizado    Boolean  @default(false)
+  notas           String?
+  fotoUrl         String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  duenoId         Int
+  dueno           Owner    @relation(fields: [duenoId], references: [id], onDelete: Cascade)
+
+  citas           Appointment[]
+  vacunas         Vaccine[]
+  tratamientos    Treatment[]
+  banosCortes     Grooming[]
+
+  @@map("pets")
+}
+
+// ---------------------------------------------------------------------------
+// MODULO: Sedes / Ubicación (Locations)
+// ---------------------------------------------------------------------------
+model Location {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  direccion   String
+  ciudad      String
+  telefono    String
+  email       String?
+  horario     String?
+  latitud     Float?
+  longitud    Float?
+  imagenUrl   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  citas       Appointment[]
+  banosCortes Grooming[]
+  resenas     Review[]
+
+  @@map("locations")
+}
+
+// ---------------------------------------------------------------------------
+// MODULO: Citas (Appointments)
+// ---------------------------------------------------------------------------
+enum EstadoCita {
+  PENDIENTE
+  CONFIRMADA
+  COMPLETADA
+  CANCELADA
+}
+
+model Appointment {
+  id          Int         @id @default(autoincrement())
+  fecha       DateTime
+  motivo      String
+  veterinario String
+  estado      EstadoCita  @default(PENDIENTE)
+  notas       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  mascotaId   Int
+  mascota     Pet         @relation(fields: [mascotaId], references: [id], onDelete: Cascade)
+
+  sedeId      Int
+  sede        Location    @relation(fields: [sedeId], references: [id])
+
+  @@map("appointments")
+}
+
+// ---------------------------------------------------------------------------
+// MODULO: Vacunas (Vaccines)
+// ---------------------------------------------------------------------------
+model Vaccine {
+  id               Int       @id @default(autoincrement())
+  nombre           String
+  fechaAplicacion  DateTime
+  proximaDosis     DateTime?
+  veterinario      String
+  lote             String?
+  notas            String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  mascotaId        Int
+  mascota          Pet       @relation(fields: [mascotaId], references: [id], onDelete: Cascade)
+
+  @@map("vaccines")
+}
+
+// ---------------------------------------------------------------------------
+// MODULO: Tratamientos (Treatments)
+// ---------------------------------------------------------------------------
+enum EstadoTratamiento {
+  EN_CURSO
+  FINALIZADO
+  SUSPENDIDO
+}
+
+model Treatment {
+  id            Int               @id @default(autoincrement())
+  diagnostico   String
+  descripcion   String
+  medicamentos  String?
+  fechaInicio   DateTime
+  fechaFin      DateTime?
+  veterinario   String
+  estado        EstadoTratamiento @default(EN_CURSO)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  mascotaId     Int
+  mascota       Pet               @relation(fields: [mascotaId], references: [id], onDelete: Cascade)
+
+  @@map("treatments")
+}
+
+// ---------------------------------------------------------------------------
+// MODULO: Baños y Cortes (Grooming)
+// ---------------------------------------------------------------------------
+enum TipoServicioGrooming {
+  BANO
+  CORTE
+  BANO_Y_CORTE
+  DESLANADO
+  CORTE_UNAS
+}
+
+model Grooming {
+  id            Int                  @id @default(autoincrement())
+  tipoServicio  TipoServicioGrooming
+  fecha         DateTime
+  precio        Float
+  encargado     String
+  notas         String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  mascotaId     Int
+  mascota       Pet                  @relation(fields: [mascotaId], references: [id], onDelete: Cascade)
+
+  sedeId        Int
+  sede          Location             @relation(fields: [sedeId], references: [id])
+
+  @@map("grooming_services")
+}
+
+// ---------------------------------------------------------------------------
+// MODULO: Reseñas (Reviews)
+// ---------------------------------------------------------------------------
+model Review {
+  id          Int      @id @default(autoincrement())
+  calificacion Int     // 1 a 5
+  comentario  String
+  fecha       DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  duenoId     Int
+  dueno       Owner    @relation(fields: [duenoId], references: [id], onDelete: Cascade)
+
+  sedeId      Int
+  sede        Location @relation(fields: [sedeId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
