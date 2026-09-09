@@ -12,6 +12,7 @@ import { InputField, SelectField, TextareaField } from "../components/FormField"
 import { treatmentsService, TreatmentInput } from "../services/treatments.service";
 import { petsService } from "../services/pets.service";
 import { getErrorMessage } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import { EstadoTratamiento, ESTADO_TRATAMIENTO_LABELS, Pet, Treatment } from "../types";
 import { formatDate, toInputDate } from "../utils/format";
 
@@ -33,6 +34,8 @@ const estadoColor: Record<EstadoTratamiento, "yellow" | "green" | "red"> = {
 };
 
 export default function TreatmentsPage() {
+  const { hasPermission } = useAuth();
+  const canManage = hasPermission("tratamientos");
   const [treatments, setTreatments] = useState<Treatment[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
@@ -142,7 +145,7 @@ export default function TreatmentsPage() {
       <PageHeader
         title="Tratamientos"
         subtitle="Diagnósticos y tratamientos médicos"
-        action={<Button onClick={openCreate}>+ Nuevo tratamiento</Button>}
+        action={canManage ? <Button onClick={openCreate}>+ Nuevo tratamiento</Button> : undefined}
       />
 
       {error && <Alert message={error} onDismiss={() => setError("")} />}
@@ -157,16 +160,20 @@ export default function TreatmentsPage() {
           columns={columns}
           data={treatments}
           rowKey={(t) => t.id}
-          actions={(t) => (
-            <div className="flex justify-end gap-2">
-              <Button variant="secondary" onClick={() => openEdit(t)}>
-                Editar
-              </Button>
-              <Button variant="danger" onClick={() => setToDelete(t)}>
-                Eliminar
-              </Button>
-            </div>
-          )}
+          actions={
+            canManage
+              ? (t) => (
+                  <div className="flex justify-end gap-2">
+                    <Button variant="secondary" onClick={() => openEdit(t)}>
+                      Editar
+                    </Button>
+                    <Button variant="danger" onClick={() => setToDelete(t)}>
+                      Eliminar
+                    </Button>
+                  </div>
+                )
+              : undefined
+          }
         />
       )}
 

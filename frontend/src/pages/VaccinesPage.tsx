@@ -12,6 +12,7 @@ import { InputField, SelectField, TextareaField } from "../components/FormField"
 import { vaccinesService, VaccineInput } from "../services/vaccines.service";
 import { petsService } from "../services/pets.service";
 import { getErrorMessage } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import { Pet, Vaccine } from "../types";
 import { formatDate, toInputDate } from "../utils/format";
 
@@ -37,6 +38,8 @@ function isProximaCercana(proximaDosis?: string | null) {
 }
 
 export default function VaccinesPage() {
+  const { hasPermission } = useAuth();
+  const canManage = hasPermission("vacunas");
   const [vaccines, setVaccines] = useState<Vaccine[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
@@ -157,7 +160,7 @@ export default function VaccinesPage() {
       <PageHeader
         title="Vacunas"
         subtitle="Control de vacunación de las mascotas"
-        action={<Button onClick={openCreate}>+ Nueva vacuna</Button>}
+        action={canManage ? <Button onClick={openCreate}>+ Nueva vacuna</Button> : undefined}
       />
 
       {error && <Alert message={error} onDismiss={() => setError("")} />}
@@ -172,16 +175,20 @@ export default function VaccinesPage() {
           columns={columns}
           data={vaccines}
           rowKey={(v) => v.id}
-          actions={(v) => (
-            <div className="flex justify-end gap-2">
-              <Button variant="secondary" onClick={() => openEdit(v)}>
-                Editar
-              </Button>
-              <Button variant="danger" onClick={() => setToDelete(v)}>
-                Eliminar
-              </Button>
-            </div>
-          )}
+          actions={
+            canManage
+              ? (v) => (
+                  <div className="flex justify-end gap-2">
+                    <Button variant="secondary" onClick={() => openEdit(v)}>
+                      Editar
+                    </Button>
+                    <Button variant="danger" onClick={() => setToDelete(v)}>
+                      Eliminar
+                    </Button>
+                  </div>
+                )
+              : undefined
+          }
         />
       )}
 

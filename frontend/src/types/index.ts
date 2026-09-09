@@ -1,5 +1,42 @@
 // Tipos compartidos por todo el frontend, reflejan el esquema de Prisma del backend.
 
+export type Rol = "ADMIN" | "STAFF";
+
+// Módulos sobre los que se puede otorgar permiso a un usuario STAFF.
+export const MODULOS = [
+  "duenos",
+  "mascotas",
+  "citas",
+  "vacunas",
+  "tratamientos",
+  "grooming",
+  "sedes",
+  "resenas",
+] as const;
+
+export type Modulo = (typeof MODULOS)[number];
+
+export const MODULO_LABELS: Record<Modulo, string> = {
+  duenos: "Dueños",
+  mascotas: "Mascotas",
+  citas: "Citas",
+  vacunas: "Vacunas",
+  tratamientos: "Tratamientos",
+  grooming: "Baños y cortes",
+  sedes: "Sedes",
+  resenas: "Reseñas",
+};
+
+export interface User {
+  id: number;
+  nombre: string;
+  email: string;
+  rol: Rol;
+  activo: boolean;
+  createdAt?: string;
+  permisos: Modulo[];
+}
+
 export type Especie = "PERRO" | "GATO" | "AVE" | "ROEDOR" | "REPTIL" | "OTRO";
 export type Sexo = "MACHO" | "HEMBRA";
 export type EstadoCita = "PENDIENTE" | "CONFIRMADA" | "COMPLETADA" | "CANCELADA";

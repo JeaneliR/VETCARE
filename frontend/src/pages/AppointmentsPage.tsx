@@ -13,6 +13,7 @@ import { appointmentsService, AppointmentInput } from "../services/appointments.
 import { petsService } from "../services/pets.service";
 import { locationsService } from "../services/locations.service";
 import { getErrorMessage } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import { Appointment, EstadoCita, ESTADO_CITA_LABELS, Location, Pet } from "../types";
 import { formatDateTime, toInputDateTime } from "../utils/format";
 
@@ -34,6 +35,8 @@ const estadoColor: Record<EstadoCita, "yellow" | "blue" | "green" | "red"> = {
 };
 
 export default function AppointmentsPage() {
+  const { hasPermission } = useAuth();
+  const canManage = hasPermission("citas");
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
@@ -150,7 +153,7 @@ export default function AppointmentsPage() {
       <PageHeader
         title="Citas"
         subtitle="Agenda de consultas y controles veterinarios"
-        action={<Button onClick={openCreate}>+ Nueva cita</Button>}
+        action={canManage ? <Button onClick={openCreate}>+ Nueva cita</Button> : undefined}
       />
 
       <div className="mb-4 flex flex-wrap gap-2">
@@ -181,16 +184,20 @@ export default function AppointmentsPage() {
           columns={columns}
           data={appointments}
           rowKey={(a) => a.id}
-          actions={(a) => (
-            <div className="flex justify-end gap-2">
-              <Button variant="secondary" onClick={() => openEdit(a)}>
-                Editar
-              </Button>
-              <Button variant="danger" onClick={() => setToDelete(a)}>
-                Eliminar
-              </Button>
-            </div>
-          )}
+          actions={
+            canManage
+              ? (a) => (
+                  <div className="flex justify-end gap-2">
+                    <Button variant="secondary" onClick={() => openEdit(a)}>
+                      Editar
+                    </Button>
+                    <Button variant="danger" onClick={() => setToDelete(a)}>
+                      Eliminar
+                    </Button>
+                  </div>
+                )
+              : undefined
+          }
         />
       )}
 

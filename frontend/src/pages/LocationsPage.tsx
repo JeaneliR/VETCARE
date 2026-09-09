@@ -10,6 +10,7 @@ import StarRating from "../components/StarRating";
 import { InputField, TextareaField } from "../components/FormField";
 import { locationsService, LocationInput } from "../services/locations.service";
 import { getErrorMessage } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import { Location } from "../types";
 
 const emptyForm: LocationInput = {
@@ -25,6 +26,8 @@ const emptyForm: LocationInput = {
 };
 
 export default function LocationsPage() {
+  const { hasPermission } = useAuth();
+  const canManage = hasPermission("sedes");
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -120,7 +123,7 @@ export default function LocationsPage() {
       <PageHeader
         title="Sedes y ubicación"
         subtitle="Locales físicos de la veterinaria"
-        action={<Button onClick={openCreate}>+ Nueva sede</Button>}
+        action={canManage ? <Button onClick={openCreate}>+ Nueva sede</Button> : undefined}
       />
 
       {error && <Alert message={error} onDismiss={() => setError("")} />}
@@ -161,14 +164,16 @@ export default function LocationsPage() {
                     {loc._count?.resenas ?? 0})
                   </span>
                 </div>
-                <div className="mt-4 flex gap-2">
-                  <Button variant="secondary" className="flex-1" onClick={() => openEdit(loc)}>
-                    Editar
-                  </Button>
-                  <Button variant="danger" className="flex-1" onClick={() => setToDelete(loc)}>
-                    Eliminar
-                  </Button>
-                </div>
+                {canManage && (
+                  <div className="mt-4 flex gap-2">
+                    <Button variant="secondary" className="flex-1" onClick={() => openEdit(loc)}>
+                      Editar
+                    </Button>
+                    <Button variant="danger" className="flex-1" onClick={() => setToDelete(loc)}>
+                      Eliminar
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           ))}

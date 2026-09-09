@@ -42,7 +42,7 @@ export default function PetDetailPage() {
         title={pet.nombre}
         subtitle={`${ESPECIE_LABELS[pet.especie]} · ${pet.raza || "Raza no especificada"}`}
         action={
-          <Link to="/mascotas">
+          <Link to="/app/mascotas">
             <Button variant="secondary">← Volver a mascotas</Button>
           </Link>
         }
@@ -63,7 +63,7 @@ export default function PetDetailPage() {
               <p className="text-sm text-slate-500">
                 Dueño:{" "}
                 {pet.dueno ? (
-                  <Link to={`/mascotas?duenoId=${pet.dueno.id}`} className="text-brand-600 hover:underline">
+                  <Link to={`/app/mascotas?duenoId=${pet.dueno.id}`} className="text-brand-600 hover:underline">
                     {pet.dueno.nombres} {pet.dueno.apellidos}
                   </Link>
                 ) : (

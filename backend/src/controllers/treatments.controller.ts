@@ -12,7 +12,7 @@ export async function list(req: Request, res: Response) {
   const treatments = await prisma.treatment.findMany({
     where: {
       ...(mascotaId ? { mascotaId: Number(mascotaId) } : {}),
-      ...(estado ? { estado: String(estado) as never } : {}),
+      ...(estado ? { estado: String(estado) } : {}),
     },
     orderBy: { fechaInicio: "desc" },
     include,
