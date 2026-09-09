@@ -1,0 +1,36 @@
+# Dependencias
+node_modules/
+**/node_modules/
+
+# Builds
+dist/
+build/
+**/dist/
+
+# Variables de entorno (cada quien usa su propio .env local)
+.env
+.env.local
+**/.env
+**/.env.local
+
+# Base de datos SQLite local (cada quien genera la suya con prisma migrate + seed)
+backend/prisma/dev.db
+backend/prisma/dev.db-journal
+*.db
+*.db-journal
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Prisma generado
+backend/generated/
