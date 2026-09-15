@@ -76,6 +76,23 @@ export async function summary(req: Request, res: Response) {
     citasPorDia.push({ fecha: dayKey, cantidad });
   }
 
+  // Ingresos del mes desglosados por tipo de servicio de grooming (baño,
+  // corte, deslanado, etc.), para saber qué servicio genera más facturación.
+  const inicioMes = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  const groomingPorTipo = await prisma.grooming.groupBy({
+    by: ["tipoServicio"],
+    where: { ...sedeWhere, fecha: { gte: inicioMes } },
+    _sum: { precio: true },
+    _count: true,
+  });
+  const ingresosPorTipoServicio = groomingPorTipo
+    .map((g) => ({
+      tipoServicio: g.tipoServicio,
+      cantidad: g._count,
+      total: g._sum.precio ?? 0,
+    }))
+    .sort((a, b) => b.total - a.total);
+
   // Calificación promedio por sede, para comparar sedes entre sí en el dashboard.
   const sedes = await prisma.location.findMany({
     select: {
@@ -103,6 +120,7 @@ export async function summary(req: Request, res: Response) {
     tratamientosEnCurso,
     serviciosGroomingMes,
     ingresosGroomingMes: ingresosGroomingAgg._sum.precio ?? 0,
+    ingresosPorTipoServicio,
     calificacionPromedio: promedioResenas._avg.calificacion,
     totalResenas: promedioResenas._count,
     proximasCitas,

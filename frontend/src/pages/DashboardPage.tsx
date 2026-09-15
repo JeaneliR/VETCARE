@@ -14,7 +14,7 @@ import { locationsService } from "../services/locations.service";
 import { reviewsService } from "../services/reviews.service";
 import { getErrorMessage } from "../services/api";
 import { useAuth } from "../context/AuthContext";
-import { DashboardSummary, ESTADO_CITA_LABELS, Location, Review } from "../types";
+import { DashboardSummary, ESTADO_CITA_LABELS, Location, Review, TIPO_GROOMING_LABELS } from "../types";
 import { formatCurrency, formatDateTime, reviewAuthorName } from "../utils/format";
 
 const estadoColor: Record<string, "yellow" | "green" | "blue" | "red"> = {
@@ -121,6 +121,13 @@ export default function DashboardPage() {
       [],
       ["Sede", "Reseñas", "Promedio"],
       ...summary.resenasPorSede.map((s) => [s.nombre, s.total, s.promedio ?? ""]),
+      [],
+      ["Tipo de servicio (grooming)", "Cantidad", "Ingresos del mes"],
+      ...summary.ingresosPorTipoServicio.map((s) => [
+        TIPO_GROOMING_LABELS[s.tipoServicio],
+        s.cantidad,
+        s.total,
+      ]),
     ];
     const csv = rows
       .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
@@ -210,6 +217,25 @@ export default function DashboardPage() {
               accent="bg-emerald-50 text-emerald-700"
             />
           </div>
+
+          {summary.ingresosPorTipoServicio.length > 0 && (
+            <div className="mt-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h2 className="mb-3 text-base font-semibold text-slate-800">
+                Ingresos del mes por tipo de servicio (baños/cortes)
+              </h2>
+              <ul className="divide-y divide-slate-100">
+                {summary.ingresosPorTipoServicio.map((item) => (
+                  <li key={item.tipoServicio} className="flex items-center justify-between py-2 text-sm">
+                    <span className="text-slate-600">
+                      {TIPO_GROOMING_LABELS[item.tipoServicio]}
+                      <span className="ml-2 text-xs text-slate-400">({item.cantidad})</span>
+                    </span>
+                    <span className="font-medium text-slate-800">{formatCurrency(item.total)}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div className="mt-6 grid gap-4 lg:grid-cols-3">
             <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
