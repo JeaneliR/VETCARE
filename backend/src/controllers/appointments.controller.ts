@@ -51,6 +51,14 @@ export async function getById(req: Request, res: Response) {
 }
 
 export async function create(req: Request, res: Response) {
+  // Validación de fecha para citas veterinarias
+  if (req.body.fecha) {
+    const appointmentDate = new Date(req.body.fecha);
+    if (isNaN(appointmentDate.getTime())) {
+      throw ApiError.badRequest("La fecha ingresada para la cita no es válida");
+    }
+  }
+
   const appointment = await prisma.appointment.create({ data: req.body, include });
   res.status(201).json(appointment);
 }
