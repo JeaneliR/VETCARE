@@ -15,7 +15,7 @@ import { reviewsService } from "../services/reviews.service";
 import { getErrorMessage } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { DashboardSummary, ESTADO_CITA_LABELS, Location, Review } from "../types";
-import { formatDateTime, reviewAuthorName } from "../utils/format";
+import { formatCurrency, formatDateTime, reviewAuthorName } from "../utils/format";
 
 const estadoColor: Record<string, "yellow" | "green" | "blue" | "red"> = {
   PENDIENTE: "yellow",
@@ -39,6 +39,8 @@ export default function DashboardPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewToDelete, setReviewToDelete] = useState<Review | null>(null);
   const [deletingReview, setDeletingReview] = useState(false);
+  const [replyDrafts, setReplyDrafts] = useState<Record<number, string>>({});
+  const [savingReplyId, setSavingReplyId] = useState<number | null>(null);
 
   useEffect(() => {
     locationsService.list().then(setLocations).catch(() => setLocations([]));
@@ -52,7 +54,15 @@ export default function DashboardPage() {
         reviewsService.list(sedeFilter ? { sedeId: sedeFilter } : undefined),
       ]);
       setSummary(summaryData);
-      setReviews(reviewsData.slice(0, 5));
+      const latestReviews = reviewsData.slice(0, 5);
+      setReviews(latestReviews);
+      setReplyDrafts((prev) => {
+        const next = { ...prev };
+        latestReviews.forEach((r) => {
+          if (next[r.id] === undefined) next[r.id] = r.respuestaAdmin ?? "";
+        });
+        return next;
+      });
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -80,6 +90,50 @@ export default function DashboardPage() {
     }
   }
 
+  async function handleSaveReply(review: Review) {
+    const texto = (replyDrafts[review.id] ?? "").trim();
+    setSavingReplyId(review.id);
+    try {
+      await reviewsService.update(review.id, { respuestaAdmin: texto });
+      await loadSummary();
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setSavingReplyId(null);
+    }
+  }
+
+  function handleExportCsv() {
+    if (!summary) return;
+    const rows: (string | number)[][] = [
+      ["Métrica", "Valor"],
+      ["Mascotas registradas", summary.totalMascotas],
+      ["Dueños registrados", summary.totalDuenos],
+      ["Sedes", summary.totalSedes],
+      ["Citas hoy", summary.citasHoy],
+      ["Citas pendientes", summary.citasPendientes],
+      ["Vacunas próx. 30 días", summary.vacunasProximas],
+      ["Tratamientos en curso", summary.tratamientosEnCurso],
+      ["Baños/cortes del mes", summary.serviciosGroomingMes],
+      ["Ingresos baños/cortes del mes", summary.ingresosGroomingMes],
+      ["Calificación promedio", summary.calificacionPromedio ?? ""],
+      ["Total reseñas", summary.totalResenas],
+      [],
+      ["Sede", "Reseñas", "Promedio"],
+      ...summary.resenasPorSede.map((s) => [s.nombre, s.total, s.promedio ?? ""]),
+    ];
+    const csv = rows
+      .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `reporte-vetcare-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   const maxCitasDia = useMemo(
     () => Math.max(1, ...(summary?.citasPorDia.map((d) => d.cantidad) ?? [1])),
     [summary]
@@ -91,16 +145,26 @@ export default function DashboardPage() {
         title="Dashboard"
         subtitle="Resumen general de la veterinaria"
         action={
-          <div className="w-56">
-            <SelectField
-              label="Sede"
-              value={sedeFilter}
-              onChange={(e) => setSedeFilter(e.target.value ? Number(e.target.value) : "")}
-              options={[
-                { value: "", label: "Todas las sedes" },
-                ...locations.map((l) => ({ value: l.id, label: l.nombre })),
-              ]}
-            />
+          <div className="flex items-end gap-3">
+            <div className="w-56">
+              <SelectField
+                label="Sede"
+                value={sedeFilter}
+                onChange={(e) => setSedeFilter(e.target.value ? Number(e.target.value) : "")}
+                options={[
+                  { value: "", label: "Todas las sedes" },
+                  ...locations.map((l) => ({ value: l.id, label: l.nombre })),
+                ]}
+              />
+            </div>
+            {summary && (
+              <button
+                onClick={handleExportCsv}
+                className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              >
+                ⬇️ Exportar CSV
+              </button>
+            )}
           </div>
         }
       />
@@ -138,6 +202,12 @@ export default function DashboardPage() {
               value={summary.serviciosGroomingMes}
               icon="✂️"
               accent="bg-teal-50 text-teal-700"
+            />
+            <StatCard
+              label="Ingresos grooming (mes)"
+              value={formatCurrency(summary.ingresosGroomingMes)}
+              icon="💰"
+              accent="bg-emerald-50 text-emerald-700"
             />
           </div>
 
@@ -232,12 +302,36 @@ export default function DashboardPage() {
                   {reviews.map((review) => (
                     <li key={review.id} className="border-b border-slate-100 pb-3 last:border-0 last:pb-0">
                       <div className="flex items-start justify-between gap-2">
-                        <div>
+                        <div className="flex-1">
                           <StarRating value={review.calificacion} />
                           <p className="mt-1 text-sm text-slate-600">"{review.comentario}"</p>
                           <p className="mt-1 text-xs text-slate-400">
                             {reviewAuthorName(review)} · {review.sede?.nombre}
                           </p>
+                          {review.respuestaAdmin && !isAdmin && (
+                            <p className="mt-2 rounded-lg bg-brand-50 px-3 py-2 text-xs text-brand-700">
+                              <span className="font-semibold">Respuesta de VetCare:</span> {review.respuestaAdmin}
+                            </p>
+                          )}
+                          {isAdmin && (
+                            <div className="mt-2 flex items-center gap-2">
+                              <input
+                                value={replyDrafts[review.id] ?? ""}
+                                onChange={(e) =>
+                                  setReplyDrafts((prev) => ({ ...prev, [review.id]: e.target.value }))
+                                }
+                                placeholder="Responder públicamente a esta reseña..."
+                                className="flex-1 rounded-lg border border-slate-300 px-2 py-1 text-xs focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                              />
+                              <button
+                                onClick={() => handleSaveReply(review)}
+                                disabled={savingReplyId === review.id}
+                                className="shrink-0 text-xs font-medium text-brand-600 hover:text-brand-700 disabled:opacity-60"
+                              >
+                                {savingReplyId === review.id ? "Guardando..." : "Guardar"}
+                              </button>
+                            </div>
+                          )}
                         </div>
                         {isAdmin && (
                           <button

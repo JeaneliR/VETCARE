@@ -25,6 +25,10 @@ export const updateReviewSchema = z.object({
   duenoId: z.coerce.number().int().positive().optional(),
   nombreCliente: z.string().trim().min(2).max(80).optional(),
   sedeId: z.coerce.number().int().positive().optional(),
+  // Respuesta pública del negocio a la reseña. Solo se llega a esta ruta
+  // como ADMIN (ver reviews.routes.ts), así que no hace falta un permiso
+  // de módulo aparte para poder escribirla.
+  respuestaAdmin: z.string().trim().max(300, "Máximo 300 caracteres").optional().or(z.literal("")),
 });
 
 export type CreateReviewInput = z.infer<typeof createReviewSchema>;

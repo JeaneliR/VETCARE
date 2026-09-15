@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import StarRating from "../../components/StarRating";
 import Spinner from "../../components/Spinner";
@@ -59,8 +59,16 @@ const navLinks = [
 
 export default function HomePage() {
   const [locations, setLocations] = useState<Location[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [allReviews, setAllReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reviewFilterSedeId, setReviewFilterSedeId] = useState<number | "">("");
+
+  const visibleReviews = useMemo(() => {
+    const filtered = reviewFilterSedeId
+      ? allReviews.filter((r) => r.sedeId === reviewFilterSedeId)
+      : allReviews;
+    return filtered.slice(0, 6);
+  }, [allReviews, reviewFilterSedeId]);
 
   const [contactName, setContactName] = useState("");
   const [contactPet, setContactPet] = useState("");
@@ -75,16 +83,18 @@ export default function HomePage() {
   const [reviewSuccess, setReviewSuccess] = useState(false);
 
   useEffect(() => {
-    Promise.all([locationsService.list(), reviewsService.list()])
+    // Solo mostramos sedes activas en el sitio público (una sede cerrada
+    // temporalmente se sigue viendo en el sistema interno, pero no aquí).
+    Promise.all([locationsService.list({ activa: true }), reviewsService.list()])
       .then(([locs, revs]) => {
         setLocations(locs);
         setReviewSedeId((current) => current || locs[0]?.id || "");
-        setReviews(revs.slice(0, 6));
+        setAllReviews(revs);
       })
       .catch(() => {
         // El sitio público sigue siendo útil aunque el API no responda todavía.
         setLocations([]);
-        setReviews([]);
+        setAllReviews([]);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -105,7 +115,7 @@ export default function HomePage() {
         sedeId: reviewSedeId,
       });
       const updated = await reviewsService.list();
-      setReviews(updated.slice(0, 6));
+      setAllReviews(updated);
       setReviewSuccess(true);
       setReviewName("");
       setReviewComment("");
@@ -261,16 +271,38 @@ export default function HomePage() {
           <p className="mt-2 text-slate-600">Opiniones reales de dueños que confían en nosotros.</p>
         </div>
 
-        {!loading && reviews.length === 0 ? (
+        {locations.length > 0 && (
+          <div className="mx-auto mt-6 max-w-xs">
+            <select
+              value={reviewFilterSedeId}
+              onChange={(e) => setReviewFilterSedeId(e.target.value ? Number(e.target.value) : "")}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            >
+              <option value="">Reseñas de todas las sedes</option>
+              {locations.map((loc) => (
+                <option key={loc.id} value={loc.id}>
+                  Solo {loc.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {!loading && visibleReviews.length === 0 ? (
           <p className="mt-8 text-center text-sm text-slate-500">Todavía no hay reseñas publicadas.</p>
         ) : (
           <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {reviews.map((review) => (
+            {visibleReviews.map((review) => (
               <div key={review.id} className="rounded-xl border border-slate-200 p-5 shadow-sm">
                 <StarRating value={review.calificacion} />
                 <p className="mt-3 text-sm text-slate-600">"{review.comentario}"</p>
                 <p className="mt-3 text-sm font-medium text-slate-800">{reviewAuthorName(review)}</p>
                 <p className="text-xs text-slate-400">{review.sede?.nombre}</p>
+                {review.respuestaAdmin && (
+                  <p className="mt-3 rounded-lg bg-brand-50 px-3 py-2 text-xs text-brand-700">
+                    <span className="font-semibold">Respuesta de VetCare:</span> {review.respuestaAdmin}
+                  </p>
+                )}
               </div>
             ))}
           </div>

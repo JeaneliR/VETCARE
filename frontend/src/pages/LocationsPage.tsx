@@ -7,6 +7,7 @@ import Alert from "../components/Alert";
 import Spinner from "../components/Spinner";
 import EmptyState from "../components/EmptyState";
 import StarRating from "../components/StarRating";
+import Badge from "../components/Badge";
 import { InputField, TextareaField } from "../components/FormField";
 import { locationsService, LocationInput } from "../services/locations.service";
 import { getErrorMessage } from "../services/api";
@@ -23,6 +24,7 @@ const emptyForm: LocationInput = {
   latitud: undefined,
   longitud: undefined,
   imagenUrl: "",
+  activa: true,
 };
 
 export default function LocationsPage() {
@@ -76,6 +78,7 @@ export default function LocationsPage() {
       latitud: location.latitud ?? undefined,
       longitud: location.longitud ?? undefined,
       imagenUrl: location.imagenUrl ?? "",
+      activa: location.activa,
     });
     setFormError("");
     setModalOpen(true);
@@ -141,7 +144,10 @@ export default function LocationsPage() {
                 <img src={loc.imagenUrl} alt={loc.nombre} className="h-36 w-full object-cover" />
               )}
               <div className="p-4">
-                <h3 className="font-semibold text-slate-800">{loc.nombre}</h3>
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="font-semibold text-slate-800">{loc.nombre}</h3>
+                  <Badge color={loc.activa ? "green" : "red"}>{loc.activa ? "Activa" : "Inactiva"}</Badge>
+                </div>
                 <p className="mt-1 text-sm text-slate-500">
                   📍 {loc.direccion}, {loc.ciudad}
                 </p>
@@ -244,6 +250,15 @@ export default function LocationsPage() {
             value={form.imagenUrl ?? ""}
             onChange={(e) => setForm({ ...form, imagenUrl: e.target.value })}
           />
+          <label className="flex items-center gap-2 text-sm text-slate-700">
+            <input
+              type="checkbox"
+              checked={form.activa}
+              onChange={(e) => setForm({ ...form, activa: e.target.checked })}
+              className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+            />
+            Sede activa (si se desmarca, deja de mostrarse en la página pública)
+          </label>
           <div className="mt-2 flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>
               Cancelar

@@ -10,6 +10,7 @@ export const createLocationSchema = z.object({
   latitud: z.coerce.number().min(-90).max(90).optional(),
   longitud: z.coerce.number().min(-180).max(180).optional(),
   imagenUrl: z.string().url().optional().or(z.literal("")),
+  activa: z.coerce.boolean().optional(),
 });
 
 export const updateLocationSchema = createLocationSchema.partial();
