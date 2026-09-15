@@ -13,6 +13,7 @@ function serialize(user: {
   activo: boolean;
   createdAt: Date;
   permisos: { modulo: string }[];
+  sedes: { locationId: number }[];
 }) {
   return {
     id: user.id,
@@ -22,26 +23,29 @@ function serialize(user: {
     activo: user.activo,
     createdAt: user.createdAt,
     permisos: user.permisos.map((p) => p.modulo),
+    sedes: user.sedes.map((s) => s.locationId),
   };
 }
+
+const withRelations = { permisos: true, sedes: true };
 
 export async function list(_req: Request, res: Response) {
   const users = await prisma.user.findMany({
     orderBy: { nombre: "asc" },
-    include: { permisos: true },
+    include: withRelations,
   });
   res.json(users.map(serialize));
 }
 
 export async function getById(req: Request, res: Response) {
   const id = parseIdParam(req.params.id);
-  const user = await prisma.user.findUnique({ where: { id }, include: { permisos: true } });
+  const user = await prisma.user.findUnique({ where: { id }, include: withRelations });
   if (!user) throw ApiError.notFound("Usuario no encontrado");
   res.json(serialize(user));
 }
 
 export async function create(req: Request, res: Response) {
-  const { nombre, email, password, rol, permisos } = req.body;
+  const { nombre, email, password, rol, permisos, sedes } = req.body;
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) throw ApiError.conflict("Ya existe un usuario con ese email");
@@ -56,8 +60,11 @@ export async function create(req: Request, res: Response) {
       permisos: {
         create: (permisos as string[]).map((modulo) => ({ modulo })),
       },
+      sedes: {
+        create: ((sedes as number[]) ?? []).map((locationId) => ({ locationId })),
+      },
     },
-    include: { permisos: true },
+    include: withRelations,
   });
 
   res.status(201).json(serialize(user));
@@ -65,7 +72,7 @@ export async function create(req: Request, res: Response) {
 
 export async function update(req: Request, res: Response) {
   const id = parseIdParam(req.params.id);
-  const { nombre, email, password, rol, activo, permisos } = req.body;
+  const { nombre, email, password, rol, activo, permisos, sedes } = req.body;
 
   if (req.user?.id === id && (rol === "STAFF" || activo === false)) {
     throw ApiError.badRequest("No puedes quitarte tu propio acceso de administrador");
@@ -83,10 +90,15 @@ export async function update(req: Request, res: Response) {
     data.permisos = { create: (permisos as string[]).map((modulo) => ({ modulo })) };
   }
 
+  if (sedes !== undefined) {
+    await prisma.userLocation.deleteMany({ where: { userId: id } });
+    data.sedes = { create: (sedes as number[]).map((locationId) => ({ locationId })) };
+  }
+
   const user = await prisma.user.update({
     where: { id },
     data,
-    include: { permisos: true },
+    include: withRelations,
   });
 
   res.json(serialize(user));

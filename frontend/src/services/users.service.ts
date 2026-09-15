@@ -8,6 +8,7 @@ export interface UserInput {
   rol: Rol;
   activo?: boolean;
   permisos: Modulo[];
+  sedes: number[];
 }
 
 export const usersService = {

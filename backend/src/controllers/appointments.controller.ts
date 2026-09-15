@@ -10,10 +10,25 @@ const include = {
 
 export async function list(req: Request, res: Response) {
   const { mascotaId, sedeId, estado } = req.query;
+  const user = req.user;
+
+  // Un STAFF con sedes asignadas solo ve las citas de esas sedes; sin
+  // sedes asignadas (o ADMIN) ve todas, como antes. Si además pidió un
+  // ?sedeId= puntual, se respeta la restricción: si esa sede no es suya,
+  // simplemente no le devolvemos nada (en vez de ignorar el filtro).
+  const isRestricted = !!user && user.rol !== "ADMIN" && user.sedes.length > 0;
+  let sedeFilter: number | { in: number[] } | undefined;
+  if (sedeId) {
+    const requested = Number(sedeId);
+    sedeFilter = isRestricted && !user!.sedes.includes(requested) ? -1 : requested;
+  } else if (isRestricted) {
+    sedeFilter = { in: user!.sedes };
+  }
+
   const appointments = await prisma.appointment.findMany({
     where: {
       ...(mascotaId ? { mascotaId: Number(mascotaId) } : {}),
-      ...(sedeId ? { sedeId: Number(sedeId) } : {}),
+      ...(sedeFilter !== undefined ? { sedeId: sedeFilter } : {}),
       ...(estado ? { estado: String(estado) } : {}),
     },
     orderBy: { fecha: "asc" },

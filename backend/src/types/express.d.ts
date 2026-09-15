@@ -10,6 +10,9 @@ declare global {
         email: string;
         rol: "ADMIN" | "STAFF";
         permisos: string[];
+        // IDs de las sedes a las que este usuario queda restringido. Un
+        // arreglo vacío significa "todas las sedes" (sin restricción).
+        sedes: number[];
       };
     }
   }

@@ -3,28 +3,24 @@ import * as reviewsController from "../controllers/reviews.controller";
 import { asyncHandler } from "../utils/asyncHandler";
 import { validate } from "../middleware/validate";
 import { createReviewSchema, updateReviewSchema } from "../schemas/review.schema";
-import { authenticate, requireModule } from "../middleware/auth";
+import { authenticate, requireAdmin } from "../middleware/auth";
 
 const router = Router();
 
-// GET es público: el sitio web muestra las reseñas de clientes sin login.
-// Registrar/editar/eliminar reseñas sigue siendo tarea del staff autenticado.
+// Las reseñas ya no son un módulo del sistema interno: se muestran y se
+// crean desde la web pública, sin login (así el cliente puede dejar la
+// suya directo desde el sitio). Editarlas/borrarlas (moderación) sigue
+// requiriendo ser ADMIN.
 router.get("/", asyncHandler(reviewsController.list));
 router.get("/:id", asyncHandler(reviewsController.getById));
-router.post(
-  "/",
-  authenticate,
-  requireModule("resenas"),
-  validate(createReviewSchema),
-  asyncHandler(reviewsController.create)
-);
+router.post("/", validate(createReviewSchema), asyncHandler(reviewsController.create));
 router.put(
   "/:id",
   authenticate,
-  requireModule("resenas"),
+  requireAdmin,
   validate(updateReviewSchema),
   asyncHandler(reviewsController.update)
 );
-router.delete("/:id", authenticate, requireModule("resenas"), asyncHandler(reviewsController.remove));
+router.delete("/:id", authenticate, requireAdmin, asyncHandler(reviewsController.remove));
 
 export default router;

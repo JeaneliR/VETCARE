@@ -13,7 +13,6 @@ import VaccinesPage from "./pages/VaccinesPage";
 import TreatmentsPage from "./pages/TreatmentsPage";
 import GroomingPage from "./pages/GroomingPage";
 import LocationsPage from "./pages/LocationsPage";
-import ReviewsPage from "./pages/ReviewsPage";
 import UsersPage from "./pages/UsersPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
@@ -44,7 +43,6 @@ export default function App() {
         <Route path="tratamientos" element={<TreatmentsPage />} />
         <Route path="banos-cortes" element={<GroomingPage />} />
         <Route path="sedes" element={<LocationsPage />} />
-        <Route path="resenas" element={<ReviewsPage />} />
         <Route
           path="usuarios"
           element={

@@ -3,6 +3,7 @@
 export type Rol = "ADMIN" | "STAFF";
 
 // Módulos sobre los que se puede otorgar permiso a un usuario STAFF.
+// "resenas" no está aquí: ya no es un módulo del sistema interno (ver Review).
 export const MODULOS = [
   "duenos",
   "mascotas",
@@ -11,7 +12,6 @@ export const MODULOS = [
   "tratamientos",
   "grooming",
   "sedes",
-  "resenas",
 ] as const;
 
 export type Modulo = (typeof MODULOS)[number];
@@ -24,7 +24,6 @@ export const MODULO_LABELS: Record<Modulo, string> = {
   tratamientos: "Tratamientos",
   grooming: "Baños y cortes",
   sedes: "Sedes",
-  resenas: "Reseñas",
 };
 
 export interface User {
@@ -35,6 +34,8 @@ export interface User {
   activo: boolean;
   createdAt?: string;
   permisos: Modulo[];
+  // IDs de sedes a las que queda restringido (citas/grooming). Vacío = todas.
+  sedes: number[];
 }
 
 export type Especie = "PERRO" | "GATO" | "AVE" | "ROEDOR" | "REPTIL" | "OTRO";
@@ -149,9 +150,12 @@ export interface Review {
   calificacion: number;
   comentario: string;
   fecha: string;
-  duenoId: number;
+  // Una reseña viene de un Dueño ya registrado (duenoId) o de alguien que
+  // solo dejó su nombre desde la web pública (nombreCliente); no ambos.
+  duenoId?: number | null;
+  nombreCliente?: string | null;
   sedeId: number;
-  dueno?: Pick<Owner, "id" | "nombres" | "apellidos">;
+  dueno?: Pick<Owner, "id" | "nombres" | "apellidos"> | null;
   sede?: Pick<Location, "id" | "nombre">;
 }
 
@@ -167,6 +171,8 @@ export interface DashboardSummary {
   calificacionPromedio: number | null;
   totalResenas: number;
   proximasCitas: Appointment[];
+  citasPorDia: { fecha: string; cantidad: number }[];
+  resenasPorSede: { sedeId: number; nombre: string; total: number; promedio: number | null }[];
 }
 
 // Etiquetas legibles para mostrar en la UI
