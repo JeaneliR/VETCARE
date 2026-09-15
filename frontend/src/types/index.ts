@@ -171,6 +171,7 @@ export interface DashboardSummary {
   tratamientosEnCurso: number;
   serviciosGroomingMes: number;
     ingresosGroomingMes: number;
+      ingresosPorTipoServicio: { tipoServicio: TipoServicioGrooming; cantidad: number; total: number }[];
   calificacionPromedio: number | null;
   totalResenas: number;
   proximasCitas: Appointment[];
