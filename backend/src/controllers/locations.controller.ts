@@ -3,8 +3,13 @@ import prisma from "../lib/prisma";
 import { ApiError } from "../utils/ApiError";
 import { parseIdParam } from "../middleware/validate";
 
-export async function list(_req: Request, res: Response) {
+export async function list(req: Request, res: Response) {
+  // El sitio público solo debe listar sedes activas (?activa=true), pero el
+  // sistema interno (LocationsPage) sigue viendo todas para poder reactivar
+  // una sede cerrada temporalmente.
+  const { activa } = req.query;
   const locations = await prisma.location.findMany({
+    where: activa !== undefined ? { activa: activa === "true" } : {},
     orderBy: { nombre: "asc" },
     include: {
       _count: { select: { citas: true, banosCortes: true, resenas: true } },

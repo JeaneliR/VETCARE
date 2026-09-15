@@ -89,6 +89,7 @@ export interface Location {
   latitud?: number | null;
   longitud?: number | null;
   imagenUrl?: string | null;
+    activa: boolean;
   calificacionPromedio?: number | null;
   _count?: { citas: number; banosCortes: number; resenas: number };
   resenas?: Review[];
@@ -154,6 +155,7 @@ export interface Review {
   // solo dejó su nombre desde la web pública (nombreCliente); no ambos.
   duenoId?: number | null;
   nombreCliente?: string | null;
+    respuestaAdmin?: string | null;
   sedeId: number;
   dueno?: Pick<Owner, "id" | "nombres" | "apellidos"> | null;
   sede?: Pick<Location, "id" | "nombre">;
@@ -168,6 +170,7 @@ export interface DashboardSummary {
   vacunasProximas: number;
   tratamientosEnCurso: number;
   serviciosGroomingMes: number;
+    ingresosGroomingMes: number;
   calificacionPromedio: number | null;
   totalResenas: number;
   proximasCitas: Appointment[];

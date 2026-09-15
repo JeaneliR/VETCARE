@@ -24,6 +24,7 @@ export async function summary(req: Request, res: Response) {
     vacunasProximas,
     tratamientosEnCurso,
     serviciosGroomingMes,
+    ingresosGroomingAgg,
     promedioResenas,
   ] = await Promise.all([
     prisma.pet.count(),
@@ -36,6 +37,11 @@ export async function summary(req: Request, res: Response) {
     }),
     prisma.treatment.count({ where: { estado: "EN_CURSO" } }),
     prisma.grooming.count({
+      where: { ...sedeWhere, fecha: { gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) } },
+    }),
+    // Ingresos de baños/cortes del mes en curso, para el dashboard.
+    prisma.grooming.aggregate({
+      _sum: { precio: true },
       where: { ...sedeWhere, fecha: { gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) } },
     }),
     prisma.review.aggregate({ _avg: { calificacion: true }, _count: true, where: sedeWhere }),
@@ -96,6 +102,7 @@ export async function summary(req: Request, res: Response) {
     vacunasProximas,
     tratamientosEnCurso,
     serviciosGroomingMes,
+    ingresosGroomingMes: ingresosGroomingAgg._sum.precio ?? 0,
     calificacionPromedio: promedioResenas._avg.calificacion,
     totalResenas: promedioResenas._count,
     proximasCitas,

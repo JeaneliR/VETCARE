@@ -16,6 +16,8 @@ import { useAuth } from "../context/AuthContext";
 import { Grooming, Location, Pet, TIPO_GROOMING_LABELS, TipoServicioGrooming } from "../types";
 import { formatCurrency, formatDate, toInputDate } from "../utils/format";
 
+const ALL = "TODOS";
+
 const emptyForm: GroomingInput = {
   tipoServicio: "BANO",
   fecha: "",
@@ -45,6 +47,9 @@ export default function GroomingPage() {
   const [toDelete, setToDelete] = useState<Grooming | null>(null);
   const [deleting, setDeleting] = useState(false);
 
+  const [filterTipo, setFilterTipo] = useState<string>(ALL);
+  const [filterSede, setFilterSede] = useState<number | "">("");
+
   async function loadData() {
     setLoading(true);
     try {
@@ -68,6 +73,8 @@ export default function GroomingPage() {
   }, []);
 
   const petOptions = useMemo(() => pets.map((p) => ({ value: p.id, label: p.nombre })), [pets]);
+  // Un STAFF con sedes asignadas solo debería poder elegir esas al crear/editar
+  // (el backend igual lo bloquearía, pero así no se topa con el error).
   const allowedLocations = useMemo(() => {
     if (!user || user.rol === "ADMIN" || user.sedes.length === 0) return locations;
     return locations.filter((l) => user.sedes.includes(l.id));
@@ -76,10 +83,18 @@ export default function GroomingPage() {
     () => allowedLocations.map((l) => ({ value: l.id, label: l.nombre })),
     [allowedLocations]
   );
-  
+
+  const filteredServices = useMemo(() => {
+    return services.filter((s) => {
+      if (filterTipo !== ALL && s.tipoServicio !== filterTipo) return false;
+      if (filterSede !== "" && s.sedeId !== filterSede) return false;
+      return true;
+    });
+  }, [services, filterTipo, filterSede]);
+
   function openCreate() {
     setEditing(null);
-    setForm({ ...emptyForm, mascotaId: pets[0]?.id ?? 0, sedeId: allowedLocations[0]?.id ?? 0});
+    setForm({ ...emptyForm, mascotaId: pets[0]?.id ?? 0, sedeId: allowedLocations[0]?.id ?? 0 });
     setFormError("");
     setModalOpen(true);
   }
@@ -157,14 +172,36 @@ export default function GroomingPage() {
       {error && <Alert message={error} onDismiss={() => setError("")} />}
       {success && <Alert type="success" message={success} onDismiss={() => setSuccess("")} />}
 
+      {!loading && services.length > 0 && (
+        <div className="mb-4 grid gap-4 sm:grid-cols-2 sm:max-w-md">
+          <SelectField
+            label="Filtrar por tipo de servicio"
+            value={filterTipo}
+            onChange={(e) => setFilterTipo(e.target.value)}
+            options={[
+              { value: ALL, label: "Todos" },
+              ...Object.entries(TIPO_GROOMING_LABELS).map(([value, label]) => ({ value, label })),
+            ]}
+          />
+          <SelectField
+            label="Filtrar por sede"
+            value={filterSede}
+            onChange={(e) => setFilterSede(e.target.value ? Number(e.target.value) : "")}
+            options={[{ value: "", label: "Todas las sedes" }, ...locations.map((l) => ({ value: l.id, label: l.nombre }))]}
+          />
+        </div>
+      )}
+
       {loading ? (
         <Spinner />
       ) : services.length === 0 ? (
         <EmptyState icon="✂️" title="No hay servicios registrados" description="Registra el primer servicio con el botón de arriba." />
+      ) : filteredServices.length === 0 ? (
+        <EmptyState icon="🔍" title="Ningún servicio coincide con el filtro" description="Prueba con otro tipo de servicio o sede." />
       ) : (
         <DataTable
           columns={columns}
-          data={services}
+          data={filteredServices}
           rowKey={(g) => g.id}
           actions={
             canManage

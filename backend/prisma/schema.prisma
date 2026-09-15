@@ -34,6 +34,7 @@ model User {
   @@map("users")
 }
 
+// modulo: duenos | mascotas | citas | vacunas | tratamientos | grooming | sedes | resenas
 model UserPermission {
   id     Int    @id @default(autoincrement())
   userId Int
@@ -46,7 +47,8 @@ model UserPermission {
 
 // Sedes a las que queda restringido un usuario STAFF (citas y baños/cortes).
 // Si un usuario no tiene ninguna fila aquí, se le trata como "todas las
-// sedes" (sin restricción), para no romper cuentas ya creadas.
+// sedes" (comportamiento previo, sin restricción), para no romper cuentas
+// ya creadas. El ADMIN nunca se restringe por esta tabla.
 model UserLocation {
   id         Int      @id @default(autoincrement())
   userId     Int
@@ -126,6 +128,11 @@ model Location {
   latitud     Float?
   longitud    Float?
   imagenUrl   String?
+  // Una sede inactiva (cerrada temporalmente, en remodelación, etc.) deja de
+  // mostrarse en el sitio público, pero se conserva junto con su historial
+  // de citas/servicios/reseñas. El sistema interno sigue mostrándola para
+  // que el admin pueda reactivarla.
+  activa      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -237,6 +244,8 @@ model Review {
   calificacion  Int      // 1 a 5
   comentario    String
   nombreCliente String?  // usado cuando la reseña no viene de un Owner ya registrado
+  // Respuesta pública del negocio a la reseña (solo la escribe un ADMIN).
+  respuestaAdmin String?
   fecha         DateTime @default(now())
   createdAt     DateTime @default(now())
 
