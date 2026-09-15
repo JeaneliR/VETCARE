@@ -170,8 +170,9 @@ frontend, así que se puede repartir por bloques de funcionalidad de punta a pun
 - **Persona 1 — Clientes y mascotas:** módulos de Dueños y Mascotas (incluye la
   ficha/detalle de mascota).
 - **Persona 2 — Atención médica:** módulos de Citas, Vacunas y Tratamientos.
-- **Persona 3 — Servicios y sedes:** módulos de Baños/Cortes, Sedes/Ubicación y
-  Reseñas, además del Dashboard general.
+- **Persona 3 — Servicios y sedes:** módulos de Baños/Cortes, Sedes/Ubicación
+  y Dashboard general. (Reseñas pasó a ser una función pública, no un módulo
+  del sistema interno.)
 
 Cada persona puede extender validaciones, mejorar la UI de su bloque, agregar
 pruebas o nuevas funcionalidades (ej. reportes, notificaciones) dentro de su
