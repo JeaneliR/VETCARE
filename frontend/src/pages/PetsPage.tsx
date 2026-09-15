@@ -280,11 +280,56 @@ export default function PetsPage() {
             />
             Esterilizado / castrado
           </label>
-          <InputField
-            label="URL de foto (opcional)"
-            value={form.fotoUrl ?? ""}
-            onChange={(e) => setForm({ ...form, fotoUrl: e.target.value })}
-          />
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700">
+              Foto de la mascota <span className="font-normal text-slate-400">(opcional)</span>
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                // La imagen es opcional y se guarda como data URL para no
+                // requerir un servidor de archivos adicional.
+                if (file.size > 5 * 1024 * 1024) {
+                  setFormError("La imagen no puede superar los 5 MB.");
+                  e.currentTarget.value = "";
+                  return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = () => {
+                  if (typeof reader.result === "string") {
+                    setForm({ ...form, fotoUrl: reader.result });
+                    setFormError("");
+                  }
+                };
+                reader.readAsDataURL(file);
+              }}
+              className="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 file:mr-3 file:rounded-md file:border-0 file:bg-brand-50 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-brand-700"
+            />
+            <p className="mt-1 text-xs text-slate-500">
+              Puedes seleccionar una imagen desde tu dispositivo. Máximo 5 MB.
+            </p>
+            {form.fotoUrl && (
+              <div className="mt-3 flex items-center gap-3">
+                <img
+                  src={form.fotoUrl}
+                  alt="Vista previa de la mascota"
+                  className="h-20 w-20 rounded-lg object-cover ring-1 ring-slate-200"
+                />
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setForm({ ...form, fotoUrl: "" })}
+                >
+                  Quitar foto
+                </Button>
+              </div>
+            )}
+          </div>
           <TextareaField
             label="Notas"
             value={form.notas ?? ""}
