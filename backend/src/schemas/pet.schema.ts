@@ -13,7 +13,16 @@ export const createPetSchema = z.object({
   color: z.string().optional(),
   esterilizado: z.boolean().optional().default(false),
   notas: z.string().optional(),
-  fotoUrl: z.string().url().optional().or(z.literal("")),
+    fotoUrl: z
+    .string()
+    .refine(
+      (value) =>
+        value === "" ||
+        z.string().url().safeParse(value).success ||
+        /^data:image\/(png|jpe?g|gif|webp);base64,/.test(value),
+      "La foto debe ser una URL válida o una imagen",
+    )
+    .optional(),
   duenoId: z.coerce.number().int().positive("Debe indicar un dueño válido"),
 });
 
