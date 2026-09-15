@@ -8,8 +8,11 @@ const include = {
   sede: { select: { id: true, nombre: true, ciudad: true } },
 };
 
+// ============================================================================
+// Módulo: Atención Médica (Persona 2 - Citas, Vacunas y Tratamientos)
+// ============================================================================
 export async function list(req: Request, res: Response) {
-  const { mascotaId, sedeId, estado } = req.query;
+  const { mascotaId, sedeId, estado, orden } = req.query;
   const user = req.user;
 
   // Un STAFF con sedes asignadas solo ve las citas de esas sedes; sin
@@ -25,13 +28,16 @@ export async function list(req: Request, res: Response) {
     sedeFilter = { in: user!.sedes };
   }
 
+  // Permite ordenar citas cronológicamente de forma ascendente o descendente
+  const direccionOrden = orden === "desc" ? "desc" : "asc";
+
   const appointments = await prisma.appointment.findMany({
     where: {
       ...(mascotaId ? { mascotaId: Number(mascotaId) } : {}),
       ...(sedeFilter !== undefined ? { sedeId: sedeFilter } : {}),
       ...(estado ? { estado: String(estado) } : {}),
     },
-    orderBy: { fecha: "asc" },
+    orderBy: { fecha: direccionOrden },
     include,
   });
   res.json(appointments);
