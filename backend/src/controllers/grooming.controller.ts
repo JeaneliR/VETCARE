@@ -10,10 +10,22 @@ const include = {
 
 export async function list(req: Request, res: Response) {
   const { mascotaId, sedeId } = req.query;
+  const user = req.user;
+
+  // Mismo criterio que en citas: STAFF con sedes asignadas solo ve las suyas.
+  const isRestricted = !!user && user.rol !== "ADMIN" && user.sedes.length > 0;
+  let sedeFilter: number | { in: number[] } | undefined;
+  if (sedeId) {
+    const requested = Number(sedeId);
+    sedeFilter = isRestricted && !user!.sedes.includes(requested) ? -1 : requested;
+  } else if (isRestricted) {
+    sedeFilter = { in: user!.sedes };
+  }
+
   const services = await prisma.grooming.findMany({
     where: {
       ...(mascotaId ? { mascotaId: Number(mascotaId) } : {}),
-      ...(sedeId ? { sedeId: Number(sedeId) } : {}),
+      ...(sedeFilter !== undefined ? { sedeId: sedeFilter } : {}),
     },
     orderBy: { fecha: "desc" },
     include,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import PageHeader from "../components/PageHeader";
 import StatCard from "../components/StatCard";
@@ -6,10 +6,16 @@ import Spinner from "../components/Spinner";
 import Alert from "../components/Alert";
 import EmptyState from "../components/EmptyState";
 import Badge from "../components/Badge";
+import ConfirmDialog from "../components/ConfirmDialog";
+import StarRating from "../components/StarRating";
+import { SelectField } from "../components/FormField";
 import { statsService } from "../services/stats.service";
+import { locationsService } from "../services/locations.service";
+import { reviewsService } from "../services/reviews.service";
 import { getErrorMessage } from "../services/api";
-import { DashboardSummary, ESTADO_CITA_LABELS } from "../types";
-import { formatDateTime } from "../utils/format";
+import { useAuth } from "../context/AuthContext";
+import { DashboardSummary, ESTADO_CITA_LABELS, Location, Review } from "../types";
+import { formatDateTime, reviewAuthorName } from "../utils/format";
 
 const estadoColor: Record<string, "yellow" | "green" | "blue" | "red"> = {
   PENDIENTE: "yellow",
@@ -18,22 +24,86 @@ const estadoColor: Record<string, "yellow" | "green" | "blue" | "red"> = {
   CANCELADA: "red",
 };
 
+const DIA_LABELS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+
 export default function DashboardPage() {
+  const { user } = useAuth();
+  const isAdmin = user?.rol === "ADMIN";
+
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [sedeFilter, setSedeFilter] = useState<number | "">("");
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewToDelete, setReviewToDelete] = useState<Review | null>(null);
+  const [deletingReview, setDeletingReview] = useState(false);
+
   useEffect(() => {
-    statsService
-      .summary()
-      .then(setSummary)
-      .catch((err) => setError(getErrorMessage(err)))
-      .finally(() => setLoading(false));
+    locationsService.list().then(setLocations).catch(() => setLocations([]));
   }, []);
+
+  async function loadSummary() {
+    setLoading(true);
+    try {
+      const [summaryData, reviewsData] = await Promise.all([
+        statsService.summary(sedeFilter || undefined),
+        reviewsService.list(sedeFilter ? { sedeId: sedeFilter } : undefined),
+      ]);
+      setSummary(summaryData);
+      setReviews(reviewsData.slice(0, 5));
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadSummary();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sedeFilter]);
+
+  async function handleDeleteReview() {
+    if (!reviewToDelete) return;
+    setDeletingReview(true);
+    try {
+      await reviewsService.remove(reviewToDelete.id);
+      setReviewToDelete(null);
+      await loadSummary();
+    } catch (err) {
+      setError(getErrorMessage(err));
+      setReviewToDelete(null);
+    } finally {
+      setDeletingReview(false);
+    }
+  }
+
+  const maxCitasDia = useMemo(
+    () => Math.max(1, ...(summary?.citasPorDia.map((d) => d.cantidad) ?? [1])),
+    [summary]
+  );
 
   return (
     <div>
-      <PageHeader title="Dashboard" subtitle="Resumen general de la veterinaria" />
+      <PageHeader
+        title="Dashboard"
+        subtitle="Resumen general de la veterinaria"
+        action={
+          <div className="w-56">
+            <SelectField
+              label="Sede"
+              value={sedeFilter}
+              onChange={(e) => setSedeFilter(e.target.value ? Number(e.target.value) : "")}
+              options={[
+                { value: "", label: "Todas las sedes" },
+                ...locations.map((l) => ({ value: l.id, label: l.nombre })),
+              ]}
+            />
+          </div>
+        }
+      />
 
       {error && <Alert message={error} onDismiss={() => setError("")} />}
       {loading && <Spinner />}
@@ -108,16 +178,88 @@ export default function DashboardPage() {
                 <span className="text-lg text-slate-400"> / 5</span>
               </p>
               <p className="mt-1 text-sm text-slate-500">Basado en {summary.totalResenas} reseñas</p>
-              <Link
-                to="/app/resenas"
-                className="mt-3 inline-block text-sm font-medium text-brand-600 hover:text-brand-700"
-              >
-                Ver reseñas →
-              </Link>
+
+              {!sedeFilter && summary.resenasPorSede.length > 0 && (
+                <ul className="mt-4 space-y-2 border-t border-slate-100 pt-3">
+                  {summary.resenasPorSede.map((s) => (
+                    <li key={s.sedeId} className="flex items-center justify-between text-sm">
+                      <span className="text-slate-600">{s.nombre}</span>
+                      <span className="flex items-center gap-1 text-slate-500">
+                        {s.promedio ? s.promedio.toFixed(1) : "—"}
+                        <span className="text-xs text-slate-400">({s.total})</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+              <h2 className="mb-4 text-base font-semibold text-slate-800">Citas de los últimos 7 días</h2>
+              <div className="flex items-end justify-between gap-2" style={{ height: 140 }}>
+                {summary.citasPorDia.map((d) => {
+                  const heightPct = (d.cantidad / maxCitasDia) * 100;
+                  const dia = DIA_LABELS[new Date(d.fecha + "T00:00:00").getDay()];
+                  return (
+                    <div key={d.fecha} className="flex flex-1 flex-col items-center gap-1">
+                      <span className="text-xs font-medium text-slate-500">{d.cantidad}</span>
+                      <div className="flex w-full flex-1 items-end">
+                        <div
+                          className="w-full rounded-t-md bg-brand-500"
+                          style={{ height: `${Math.max(heightPct, d.cantidad > 0 ? 6 : 2)}%` }}
+                        />
+                      </div>
+                      <span className="text-[11px] text-slate-400">{dia}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="mb-3 flex items-center justify-between">
+                <h2 className="text-base font-semibold text-slate-800">Últimas reseñas</h2>
+                <Link to="/#resenas" className="text-xs font-medium text-brand-600 hover:text-brand-700">
+                  Ver en la web →
+                </Link>
+              </div>
+              {reviews.length === 0 ? (
+                <EmptyState icon="⭐" title="Sin reseñas todavía" />
+              ) : (
+                <ul className="space-y-3">
+                  {reviews.map((review) => (
+                    <li key={review.id} className="border-b border-slate-100 pb-3 last:border-0 last:pb-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <StarRating value={review.calificacion} />
+                          <p className="mt-1 text-sm text-slate-600">"{review.comentario}"</p>
+                          <p className="mt-1 text-xs text-slate-400">
+                            {reviewAuthorName(review)} · {review.sede?.nombre}
+                          </p>
+                        </div>
+                        {isAdmin && (
+                          <button
+                            onClick={() => setReviewToDelete(review)}
+                            className="shrink-0 text-xs font-medium text-red-500 hover:text-red-700"
+                            title="Eliminar reseña"
+                          >
+                            Eliminar
+                          </button>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <p className="mt-3 text-xs text-slate-400">
+                Las reseñas las dejan los clientes desde la página web, no desde aquí.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
             {[
               { to: "/app/duenos", label: "Dueños", icon: "👤" },
               { to: "/app/mascotas", label: "Mascotas", icon: "🐾" },
@@ -126,7 +268,6 @@ export default function DashboardPage() {
               { to: "/app/tratamientos", label: "Tratamientos", icon: "🩺" },
               { to: "/app/banos-cortes", label: "Baños/Cortes", icon: "✂️" },
               { to: "/app/sedes", label: "Sedes", icon: "📍" },
-              { to: "/app/resenas", label: "Reseñas", icon: "⭐" },
             ].map((shortcut) => (
               <Link
                 key={shortcut.to}
@@ -140,6 +281,15 @@ export default function DashboardPage() {
           </div>
         </>
       )}
+
+      <ConfirmDialog
+        open={!!reviewToDelete}
+        title="Eliminar reseña"
+        message="¿Seguro que deseas eliminar esta reseña? Esta acción no se puede deshacer."
+        onCancel={() => setReviewToDelete(null)}
+        onConfirm={handleDeleteReview}
+        loading={deletingReview}
+      />
     </div>
   );
 }

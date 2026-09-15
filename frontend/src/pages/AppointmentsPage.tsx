@@ -35,7 +35,7 @@ const estadoColor: Record<EstadoCita, "yellow" | "blue" | "green" | "red"> = {
 };
 
 export default function AppointmentsPage() {
-  const { hasPermission } = useAuth();
+  const { user, hasPermission } = useAuth();
   const canManage = hasPermission("citas");
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);
@@ -78,11 +78,18 @@ export default function AppointmentsPage() {
   }, [estadoFilter]);
 
   const petOptions = useMemo(() => pets.map((p) => ({ value: p.id, label: p.nombre })), [pets]);
-  const locationOptions = useMemo(() => locations.map((l) => ({ value: l.id, label: l.nombre })), [locations]);
+  const allowedLocations = useMemo(() => {
+    if (!user || user.rol === "ADMIN" || user.sedes.length === 0) return locations;
+    return locations.filter((l) => user.sedes.includes(l.id));
+  }, [locations, user]);
+  const locationOptions = useMemo(
+    () => allowedLocations.map((l) => ({ value: l.id, label: l.nombre })),
+    [allowedLocations]
+  );
 
   function openCreate() {
     setEditing(null);
-    setForm({ ...emptyForm, mascotaId: pets[0]?.id ?? 0, sedeId: locations[0]?.id ?? 0 });
+    setForm({ ...emptyForm, mascotaId: pets[0]?.id ?? 0, sedeId: allowedLocations[0]?.id ?? 0 });
     setFormError("");
     setModalOpen(true);
   }

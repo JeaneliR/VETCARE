@@ -43,3 +43,13 @@ export function fullName(person?: { nombres: string; apellidos: string } | null)
   if (!person) return "—";
   return `${person.nombres} ${person.apellidos}`;
 }
+
+// Una reseña puede venir de un Dueño ya registrado o de alguien que solo
+// dejó su nombre desde la web pública (nombreCliente).
+export function reviewAuthorName(review: {
+  dueno?: { nombres: string; apellidos: string } | null;
+  nombreCliente?: string | null;
+}): string {
+  if (review.dueno) return fullName(review.dueno);
+  return review.nombreCliente || "Cliente anónimo";
+}

@@ -9,6 +9,9 @@ interface AuthContextValue {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   hasPermission: (modulo: Modulo) => boolean;
+  // true si el usuario puede operar en esa sede: ADMIN siempre, y un STAFF
+  // sin sedes asignadas también (se interpreta como "todas las sedes").
+  hasSedeAccess: (sedeId: number) => boolean;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -49,8 +52,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return user.rol === "ADMIN" || user.permisos.includes(modulo);
   }
 
+  function hasSedeAccess(sedeId: number) {
+    if (!user) return false;
+    return user.rol === "ADMIN" || user.sedes.length === 0 || user.sedes.includes(sedeId);
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, hasPermission }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, hasPermission, hasSedeAccess }}>
       {children}
     </AuthContext.Provider>
   );

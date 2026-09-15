@@ -10,9 +10,10 @@ import DataTable, { Column } from "../components/DataTable";
 import Badge from "../components/Badge";
 import { InputField, SelectField } from "../components/FormField";
 import { usersService, UserInput } from "../services/users.service";
+import { locationsService } from "../services/locations.service";
 import { getErrorMessage } from "../services/api";
 import { useAuth } from "../context/AuthContext";
-import { Modulo, MODULO_LABELS, MODULOS, Rol, User } from "../types";
+import { Location, Modulo, MODULO_LABELS, MODULOS, Rol, User } from "../types";
 
 const emptyForm: UserInput = {
   nombre: "",
@@ -21,11 +22,13 @@ const emptyForm: UserInput = {
   rol: "STAFF",
   activo: true,
   permisos: [],
+  sedes: [],
 };
 
 export default function UsersPage() {
   const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -42,7 +45,9 @@ export default function UsersPage() {
   async function loadUsers() {
     setLoading(true);
     try {
-      setUsers(await usersService.list());
+      const [usersData, locationsData] = await Promise.all([usersService.list(), locationsService.list()]);
+      setUsers(usersData);
+      setLocations(locationsData);
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -70,6 +75,7 @@ export default function UsersPage() {
       rol: user.rol,
       activo: user.activo,
       permisos: user.permisos,
+      sedes: user.sedes,
     });
     setFormError("");
     setModalOpen(true);
@@ -81,6 +87,13 @@ export default function UsersPage() {
       permisos: prev.permisos.includes(modulo)
         ? prev.permisos.filter((m) => m !== modulo)
         : [...prev.permisos, modulo],
+    }));
+  }
+
+  function toggleSede(sedeId: number) {
+    setForm((prev) => ({
+      ...prev,
+      sedes: prev.sedes.includes(sedeId) ? prev.sedes.filter((s) => s !== sedeId) : [...prev.sedes, sedeId],
     }));
   }
 
@@ -149,6 +162,26 @@ export default function UsersPage() {
                 {MODULO_LABELS[p]}
               </Badge>
             ))}
+          </div>
+        ),
+    },
+    {
+      header: "Sedes",
+      accessor: (u) =>
+        u.rol === "ADMIN" ? (
+          <span className="text-xs text-slate-500">Todas</span>
+        ) : u.sedes.length === 0 ? (
+          <span className="text-xs text-slate-400">Todas (sin restringir)</span>
+        ) : (
+          <div className="flex flex-wrap gap-1">
+            {u.sedes.map((sedeId) => {
+              const sede = locations.find((l) => l.id === sedeId);
+              return (
+                <Badge key={sedeId} color="blue">
+                  {sede?.nombre ?? `Sede #${sedeId}`}
+                </Badge>
+              );
+            })}
           </div>
         ),
     },
@@ -246,6 +279,33 @@ export default function UsersPage() {
               <p className="mt-2 text-xs text-slate-400">
                 Este usuario podrá ver todos los módulos, pero solo crear/editar/eliminar en los que
                 marques aquí.
+              </p>
+            </div>
+          )}
+
+          {form.rol === "STAFF" && (
+            <div>
+              <p className="mb-2 text-sm font-medium text-slate-700">Sedes asignadas</p>
+              {locations.length === 0 ? (
+                <p className="text-xs text-slate-400">No hay sedes registradas todavía.</p>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  {locations.map((sede) => (
+                    <label key={sede.id} className="flex items-center gap-2 text-sm text-slate-600">
+                      <input
+                        type="checkbox"
+                        checked={form.sedes.includes(sede.id)}
+                        onChange={() => toggleSede(sede.id)}
+                        className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                      />
+                      {sede.nombre}
+                    </label>
+                  ))}
+                </div>
+              )}
+              <p className="mt-2 text-xs text-slate-400">
+                Si no marcas ninguna sede, este usuario podrá trabajar con citas y baños/cortes de
+                todas las sedes. Si marcas una o más, quedará restringido solo a esas.
               </p>
             </div>
           )}

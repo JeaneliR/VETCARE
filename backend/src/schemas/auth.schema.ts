@@ -17,6 +17,8 @@ export const createUserSchema = z.object({
   password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
   rol: rolEnum.default("STAFF"),
   permisos: z.array(moduloEnum).default([]),
+  // IDs de sedes a las que queda restringido este usuario. Vacío = todas.
+  sedes: z.array(z.coerce.number().int().positive()).default([]),
 });
 
 export const updateUserSchema = z.object({
@@ -26,6 +28,7 @@ export const updateUserSchema = z.object({
   rol: rolEnum.optional(),
   activo: z.boolean().optional(),
   permisos: z.array(moduloEnum).optional(),
+  sedes: z.array(z.coerce.number().int().positive()).optional(),
 });
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;

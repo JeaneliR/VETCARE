@@ -10,7 +10,6 @@ const baseLinks = [
   { to: "/app/tratamientos", label: "Tratamientos", icon: "🩺" },
   { to: "/app/banos-cortes", label: "Baños y cortes", icon: "✂️" },
   { to: "/app/sedes", label: "Sedes", icon: "📍" },
-  { to: "/app/resenas", label: "Reseñas", icon: "⭐" },
 ];
 
 export default function Layout() {

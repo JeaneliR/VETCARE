@@ -29,11 +29,11 @@ model User {
   updatedAt    DateTime         @updatedAt
 
   permisos     UserPermission[]
+  sedes        UserLocation[]
 
   @@map("users")
 }
 
-// modulo: duenos | mascotas | citas | vacunas | tratamientos | grooming | sedes | resenas
 model UserPermission {
   id     Int    @id @default(autoincrement())
   userId Int
@@ -42,6 +42,20 @@ model UserPermission {
 
   @@unique([userId, modulo])
   @@map("user_permissions")
+}
+
+// Sedes a las que queda restringido un usuario STAFF (citas y baños/cortes).
+// Si un usuario no tiene ninguna fila aquí, se le trata como "todas las
+// sedes" (sin restricción), para no romper cuentas ya creadas.
+model UserLocation {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  locationId Int
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, locationId])
+  @@map("user_locations")
 }
 
 // ---------------------------------------------------------------------------
@@ -118,6 +132,7 @@ model Location {
   citas       Appointment[]
   banosCortes Grooming[]
   resenas     Review[]
+  usuarios    UserLocation[]
 
   @@map("locations")
 }
@@ -213,18 +228,23 @@ model Grooming {
 // ---------------------------------------------------------------------------
 // MODULO: Reseñas (Reviews)
 // ---------------------------------------------------------------------------
+// Ya no es un módulo del sistema interno: solo se muestran/crean desde la
+// página pública. Un cliente puede dejar su reseña sin tener cuenta ni ser
+// un "Dueño" ya registrado, así que duenoId es opcional y agregamos
+// nombreCliente para ese caso (se debe llenar uno de los dos).
 model Review {
-  id          Int      @id @default(autoincrement())
-  calificacion Int     // 1 a 5
-  comentario  String
-  fecha       DateTime @default(now())
-  createdAt   DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  calificacion  Int      // 1 a 5
+  comentario    String
+  nombreCliente String?  // usado cuando la reseña no viene de un Owner ya registrado
+  fecha         DateTime @default(now())
+  createdAt     DateTime @default(now())
 
-  duenoId     Int
-  dueno       Owner    @relation(fields: [duenoId], references: [id], onDelete: Cascade)
+  duenoId       Int?
+  dueno         Owner?   @relation(fields: [duenoId], references: [id], onDelete: Cascade)
 
-  sedeId      Int
-  sede        Location @relation(fields: [sedeId], references: [id], onDelete: Cascade)
+  sedeId        Int
+  sede          Location @relation(fields: [sedeId], references: [id], onDelete: Cascade)
 
   @@map("reviews")
 }
