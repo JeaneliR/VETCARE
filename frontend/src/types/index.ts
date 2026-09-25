@@ -9,6 +9,7 @@ export const MODULOS = [
   "mascotas",
   "citas",
   "vacunas",
+  "inventario",
   "tratamientos",
   "grooming",
   "sedes",
@@ -21,6 +22,7 @@ export const MODULO_LABELS: Record<Modulo, string> = {
   mascotas: "Mascotas",
   citas: "Citas",
   vacunas: "Vacunas",
+  inventario: "Inventario",
   tratamientos: "Tratamientos",
   grooming: "Baños y cortes",
   sedes: "Sedes",
@@ -209,3 +211,19 @@ export const TIPO_GROOMING_LABELS: Record<TipoServicioGrooming, string> = {
   DESLANADO: "Deslanado",
   CORTE_UNAS: "Corte de uñas",
 };
+
+export interface InventoryItem {
+  id: number;
+  nombre: string;
+  categoria: string;
+  stock: number;
+  stockMinimo: number;
+  precio: number;
+  proveedor?: string | null;
+  ubicacion?: string | null;
+  observaciones?: string | null;
+  fechaVencimiento?: string | null;
+  activo: boolean;
+  createdAt: string;
+  updatedAt: string;
+}

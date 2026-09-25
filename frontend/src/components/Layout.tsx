@@ -7,6 +7,7 @@ const baseLinks = [
   { to: "/app/mascotas", label: "Mascotas", icon: "🐾" },
   { to: "/app/citas", label: "Citas", icon: "📅" },
   { to: "/app/vacunas", label: "Vacunas", icon: "💉" },
+  { to: "/app/inventario", label: "Inventario", icon: "📦" },
   { to: "/app/tratamientos", label: "Tratamientos", icon: "🩺" },
   { to: "/app/banos-cortes", label: "Baños y cortes", icon: "✂️" },
   { to: "/app/sedes", label: "Sedes", icon: "📍" },

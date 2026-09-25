@@ -15,6 +15,7 @@ import GroomingPage from "./pages/GroomingPage";
 import LocationsPage from "./pages/LocationsPage";
 import UsersPage from "./pages/UsersPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import InventoryPage from "./pages/InventoryPage";
 
 export default function App() {
   return (
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="mascotas/:id" element={<PetDetailPage />} />
         <Route path="citas" element={<AppointmentsPage />} />
         <Route path="vacunas" element={<VaccinesPage />} />
+        <Route path="inventario" element={<InventoryPage />} />
         <Route path="tratamientos" element={<TreatmentsPage />} />
         <Route path="banos-cortes" element={<GroomingPage />} />
         <Route path="sedes" element={<LocationsPage />} />
