@@ -1,8 +1,12 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET ?? "vetcare-secreto-de-desarrollo";
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN ?? "12h";
+import bcrypt from "bcryptjs";
+import jwt, { type SignOptions } from "jsonwebtoken";
+
+const JWT_SECRET =
+  process.env.JWT_SECRET ?? "vetcare-secreto-de-desarrollo";
+
+const JWT_EXPIRES_IN: SignOptions["expiresIn"] =
+  (process.env.JWT_EXPIRES_IN ?? "12h") as SignOptions["expiresIn"];
 
 export interface TokenPayload {
   sub: number;
@@ -13,14 +17,32 @@ export function hashPassword(plain: string): Promise<string> {
   return bcrypt.hash(plain, 10);
 }
 
-export function comparePassword(plain: string, hash: string): Promise<boolean> {
+export function comparePassword(
+  plain: string,
+  hash: string
+): Promise<boolean> {
   return bcrypt.compare(plain, hash);
 }
 
 export function signToken(payload: TokenPayload): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: JWT_EXPIRES_IN,
+  });
 }
 
 export function verifyToken(token: string): TokenPayload {
-  return jwt.verify(token, JWT_SECRET) as TokenPayload;
+  const decoded = jwt.verify(token, JWT_SECRET);
+
+  if (
+    typeof decoded === "string" ||
+    typeof decoded.sub !== "number" ||
+    (decoded.rol !== "ADMIN" && decoded.rol !== "STAFF")
+  ) {
+    throw new Error("Token JWT con estructura inválida");
+  }
+
+  return {
+    sub: decoded.sub,
+    rol: decoded.rol,
+  };
 }
