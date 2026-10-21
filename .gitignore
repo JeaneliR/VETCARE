@@ -34,3 +34,8 @@ Thumbs.db
 
 # Prisma generado
 backend/generated/
+
+# Archivos generados por TypeScript y Vite
+*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
