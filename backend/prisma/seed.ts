@@ -36,7 +36,7 @@ async function main() {
       passwordHash: recepcionPasswordHash,
       rol: "STAFF",
       permisos: {
-        create: [{ modulo: "duenos" }, { modulo: "mascotas" }, { modulo: "citas" }],
+        create: [{ modulo: "duenos" }, { modulo: "mascotas" }, { modulo: "citas" }, { modulo: "inventario" }],
       },
     },
   });
@@ -293,6 +293,43 @@ async function main() {
         encargado: "Rosa Medina",
         mascotaId: michi.id,
         sedeId: sedeCentro.id,
+      },
+    ],
+  });
+
+  console.log("📦 Creando inventario...");
+  await prisma.inventoryItem.createMany({
+    data: [
+      {
+        nombre: "Vacuna antirrábica",
+        categoria: "Vacunas",
+        stock: 18,
+        stockMinimo: 5,
+        precio: 45,
+        proveedor: "Distribuidora VetPlus",
+        ubicacion: "Almacén A",
+        observaciones: "Lote especial para perros y gatos",
+        fechaVencimiento: new Date("2027-05-15"),
+      },
+      {
+        nombre: "Antibiótico oral",
+        categoria: "Medicamentos",
+        stock: 7,
+        stockMinimo: 10,
+        precio: 28.5,
+        proveedor: "Farmacias Veterinarias del Sur",
+        ubicacion: "Almacén B",
+        observaciones: "Vigilar control de temperatura",
+        fechaVencimiento: new Date("2026-12-20"),
+      },
+      {
+        nombre: "Comida premium para perros",
+        categoria: "Alimentos",
+        stock: 25,
+        stockMinimo: 8,
+        precio: 62,
+        proveedor: "NutriPet SAC",
+        ubicacion: "Estante 1",
       },
     ],
   });

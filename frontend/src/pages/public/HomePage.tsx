@@ -72,6 +72,7 @@ export default function HomePage() {
 
   const [contactName, setContactName] = useState("");
   const [contactPet, setContactPet] = useState("");
+  const [contactExotic, setContactExotic] = useState(false);
   const [contactMessage, setContactMessage] = useState("");
 
   const [reviewName, setReviewName] = useState("");
@@ -83,8 +84,6 @@ export default function HomePage() {
   const [reviewSuccess, setReviewSuccess] = useState(false);
 
   useEffect(() => {
-    // Solo mostramos sedes activas en el sitio público (una sede cerrada
-    // temporalmente se sigue viendo en el sistema interno, pero no aquí).
     Promise.all([locationsService.list({ activa: true }), reviewsService.list()])
       .then(([locs, revs]) => {
         setLocations(locs);
@@ -92,7 +91,6 @@ export default function HomePage() {
         setAllReviews(revs);
       })
       .catch(() => {
-        // El sitio público sigue siendo útil aunque el API no responda todavía.
         setLocations([]);
         setAllReviews([]);
       })
@@ -136,6 +134,7 @@ export default function HomePage() {
     if (contactPet.trim()) {
       lines.push(`Mascota: ${contactPet}`);
     }
+    lines.push(`¿Es animal exótico?: ${contactExotic ? "Sí" : "No"}`);
     if (contactMessage.trim()) {
       lines.push(`Mensaje: ${contactMessage}`);
     }
@@ -433,6 +432,21 @@ export default function HomePage() {
                 placeholder="Ej. Rocky"
               />
             </div>
+
+            {/* Campo: Animal Exótico */}
+            <div className="flex items-center gap-2 my-1">
+              <input
+                type="checkbox"
+                id="contactExotic"
+                checked={contactExotic}
+                onChange={(e) => setContactExotic(e.target.checked)}
+                className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+              />
+              <label htmlFor="contactExotic" className="text-sm font-medium text-slate-700 cursor-pointer">
+                ¿Es un animal exótico? (ej. ave, reptil, roedor, hurón)
+              </label>
+            </div>
+
             <div>
               <label className="mb-1 block text-sm font-medium text-slate-700">Mensaje</label>
               <textarea
