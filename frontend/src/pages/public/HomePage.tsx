@@ -8,6 +8,7 @@ import { locationsService } from "../../services/locations.service";
 import { reviewsService } from "../../services/reviews.service";
 import { Location, Review } from "../../types";
 import { reviewAuthorName } from "../../utils/format";
+import PetCursor from "../../components/PetCursor";
 
 const WHATSAPP_NUMBER = "51998236732";
 
@@ -186,6 +187,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen overflow-hidden bg-white font-sans text-slate-800">
+      <PetCursor />
       {/* Navegación */}
       <header className="sticky top-0 z-40 border-b border-teal-100/80 bg-white/95 shadow-sm backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
