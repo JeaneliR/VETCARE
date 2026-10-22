@@ -37,6 +37,13 @@ function isProximaCercana(proximaDosis?: string | null) {
   return diff >= 0 && diff <= 30 * 24 * 60 * 60 * 1000;
 }
 
+const VACCINE_FILTERS = [
+  { value: "", label: "Todas" },
+  { value: "proximas", label: "Próximas (30 días)" },
+  { value: "vencidas", label: "Vencidas" },
+  { value: "al_dia", label: "Al día / Dosis única" },
+] as const;
+
 export default function VaccinesPage() {
   const { hasPermission } = useAuth();
   const canManage = hasPermission("vacunas");
@@ -45,6 +52,7 @@ export default function VaccinesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [estadoFilter, setEstadoFilter] = useState<string>("");
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Vaccine | null>(null);
@@ -58,7 +66,10 @@ export default function VaccinesPage() {
   async function loadData() {
     setLoading(true);
     try {
-      const [vaccinesData, petsData] = await Promise.all([vaccinesService.list(), petsService.list()]);
+      const [vaccinesData, petsData] = await Promise.all([
+        vaccinesService.list(estadoFilter ? { estado: estadoFilter } : undefined),
+        petsService.list(),
+      ]);
       setVaccines(vaccinesData);
       setPets(petsData);
     } catch (err) {
@@ -70,7 +81,8 @@ export default function VaccinesPage() {
 
   useEffect(() => {
     loadData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [estadoFilter]);
 
   const petOptions = useMemo(() => pets.map((p) => ({ value: p.id, label: p.nombre })), [pets]);
 
@@ -162,6 +174,22 @@ export default function VaccinesPage() {
         subtitle="Control de vacunación de las mascotas"
         action={canManage ? <Button onClick={openCreate}>+ Nueva vacuna</Button> : undefined}
       />
+
+      <div className="mb-4 flex flex-wrap gap-2">
+        {VACCINE_FILTERS.map((f) => (
+          <button
+            key={f.value || "todas"}
+            onClick={() => setEstadoFilter(f.value)}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              estadoFilter === f.value
+                ? "bg-brand-600 text-white"
+                : "border border-slate-300 bg-white text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
 
       {error && <Alert message={error} onDismiss={() => setError("")} />}
       {success && <Alert type="success" message={success} onDismiss={() => setSuccess("")} />}
