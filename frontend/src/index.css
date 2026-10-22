@@ -21,3 +21,28 @@ body {
   background-color: #cbd5e1;
   border-radius: 9999px;
 }
+
+/* Mascotas decorativas del Home público */
+.home-pet-float {
+  display: inline-block;
+  animation: home-pet-float 3.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes home-pet-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+
+  50% {
+    transform: translateY(-10px) rotate(4deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-pet-float {
+    animation: none;
+    will-change: auto;
+  }
+}

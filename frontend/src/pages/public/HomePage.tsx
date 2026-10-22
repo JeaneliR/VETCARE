@@ -3,12 +3,13 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import StarRating from "../../components/StarRating";
 import Spinner from "../../components/Spinner";
+import AnimatedPets from "../../components/public/AnimatedPets";
+import PetCursor from "../../components/PetCursor";
 import { getErrorMessage } from "../../services/api";
 import { locationsService } from "../../services/locations.service";
 import { reviewsService } from "../../services/reviews.service";
 import { Location, Review } from "../../types";
 import { reviewAuthorName } from "../../utils/format";
-import PetCursor from "../../components/PetCursor";
 
 const WHATSAPP_NUMBER = "51998236732";
 
@@ -188,6 +189,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen overflow-hidden bg-white font-sans text-slate-800">
       <PetCursor />
+
       {/* Navegación */}
       <header className="sticky top-0 z-40 border-b border-teal-100/80 bg-white/95 shadow-sm backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
@@ -231,7 +233,7 @@ export default function HomePage() {
       </header>
 
       <main>
-        {/* Portada principal con fotografía grande */}
+        {/* Portada principal con fotografía y mascotas animadas */}
         <section
           id="inicio"
           className="relative isolate scroll-mt-20 overflow-hidden bg-gradient-to-br from-cyan-50 via-white to-emerald-50"
@@ -280,6 +282,13 @@ export default function HomePage() {
             </div>
 
             <div className="relative mx-auto w-full max-w-2xl">
+              <div
+                className="pointer-events-none absolute inset-0 z-20"
+                aria-hidden="true"
+              >
+                <AnimatedPets />
+              </div>
+
               <div className="absolute -right-5 -top-5 h-28 w-28 rounded-full bg-yellow-200/70 blur-2xl" />
               <div className="absolute -bottom-6 -left-5 h-36 w-36 rounded-full bg-teal-200/70 blur-2xl" />
 
@@ -378,7 +387,9 @@ export default function HomePage() {
               </div>
               <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-teal-700 shadow-sm">
                 📍 {locations.length}{" "}
-                {locations.length === 1 ? "sede disponible" : "sedes disponibles"}
+                {locations.length === 1
+                  ? "sede disponible"
+                  : "sedes disponibles"}
               </span>
             </div>
 
@@ -691,7 +702,9 @@ export default function HomePage() {
                       disabled={reviewSubmitting}
                       className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-3 font-bold text-white shadow-md shadow-emerald-100 transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      {reviewSubmitting ? "Enviando reseña..." : "⭐ Publicar reseña"}
+                      {reviewSubmitting
+                        ? "Enviando reseña..."
+                        : "⭐ Publicar reseña"}
                     </button>
                   </form>
                 )}
@@ -809,7 +822,9 @@ export default function HomePage() {
                     className="mt-0.5 h-4 w-4 accent-teal-600"
                   />
                   <span>
-                    <span className="block font-bold">Tengo un animal exótico</span>
+                    <span className="block font-bold">
+                      Tengo un animal exótico
+                    </span>
                     <span className="mt-1 block text-slate-500">
                       Por ejemplo, un ave, reptil, roedor o hurón.
                     </span>
