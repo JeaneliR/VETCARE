@@ -8,10 +8,28 @@ const include = {
 };
 
 export async function list(req: Request, res: Response) {
-  const { mascotaId } = req.query;
+  const { mascotaId, estado, orden } = req.query;
+  const now = new Date();
+  const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const direccionOrden = orden === "asc" ? "asc" : "desc";
+
+  let dosisFilter = {};
+  if (estado === "vencidas") {
+    dosisFilter = { proximaDosis: { lt: now } };
+  } else if (estado === "proximas") {
+    dosisFilter = { proximaDosis: { gte: now, lte: in30Days } };
+  } else if (estado === "al_dia") {
+    dosisFilter = {
+      OR: [{ proximaDosis: null }, { proximaDosis: { gt: in30Days } }],
+    };
+  }
+
   const vaccines = await prisma.vaccine.findMany({
-    where: mascotaId ? { mascotaId: Number(mascotaId) } : undefined,
-    orderBy: { fechaAplicacion: "desc" },
+    where: {
+      ...(mascotaId ? { mascotaId: Number(mascotaId) } : {}),
+      ...dosisFilter,
+    },
+    orderBy: { fechaAplicacion: direccionOrden },
     include,
   });
   res.json(vaccines);

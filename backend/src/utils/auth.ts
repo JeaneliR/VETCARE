@@ -35,14 +35,29 @@ export function verifyToken(token: string): TokenPayload {
 
   if (
     typeof decoded === "string" ||
-    typeof decoded.sub !== "number" ||
+    typeof decoded !== "object" ||
+    decoded === null
+  ) {
+    throw new Error("Token JWT inválido");
+  }
+
+  const sub =
+    typeof decoded.sub === "number"
+      ? decoded.sub
+      : typeof decoded.sub === "string" && decoded.sub.trim() !== ""
+        ? Number(decoded.sub)
+        : NaN;
+
+  if (
+    !Number.isSafeInteger(sub) ||
+    sub <= 0 ||
     (decoded.rol !== "ADMIN" && decoded.rol !== "STAFF")
   ) {
     throw new Error("Token JWT con estructura inválida");
   }
 
   return {
-    sub: decoded.sub,
+    sub,
     rol: decoded.rol,
   };
 }

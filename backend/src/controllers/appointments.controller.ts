@@ -8,8 +8,11 @@ const include = {
   sede: { select: { id: true, nombre: true, ciudad: true } },
 };
 
+// ============================================================================
+// Módulo: Atención Médica (Persona 2 - Citas, Vacunas y Tratamientos)
+// ============================================================================
 export async function list(req: Request, res: Response) {
-  const { mascotaId, sedeId, estado } = req.query;
+  const { mascotaId, sedeId, estado, orden } = req.query;
   const user = req.user;
 
   // Un STAFF con sedes asignadas solo ve las citas de esas sedes; sin
@@ -25,13 +28,16 @@ export async function list(req: Request, res: Response) {
     sedeFilter = { in: user!.sedes };
   }
 
+  // Permite ordenar citas cronológicamente de forma ascendente o descendente
+  const direccionOrden = orden === "desc" ? "desc" : "asc";
+
   const appointments = await prisma.appointment.findMany({
     where: {
       ...(mascotaId ? { mascotaId: Number(mascotaId) } : {}),
       ...(sedeFilter !== undefined ? { sedeId: sedeFilter } : {}),
       ...(estado ? { estado: String(estado) } : {}),
     },
-    orderBy: { fecha: "asc" },
+    orderBy: { fecha: direccionOrden },
     include,
   });
   res.json(appointments);
@@ -45,12 +51,56 @@ export async function getById(req: Request, res: Response) {
 }
 
 export async function create(req: Request, res: Response) {
+  // Validación de fecha para citas veterinarias
+  if (req.body.fecha) {
+    const appointmentDate = new Date(req.body.fecha);
+    if (isNaN(appointmentDate.getTime())) {
+      throw ApiError.badRequest("La fecha ingresada para la cita no es válida");
+    }
+
+    // Evitar cruce de horario para el mismo veterinario en citas activas
+    if (req.body.veterinario) {
+      const conflictoHorario = await prisma.appointment.findFirst({
+        where: {
+          fecha: appointmentDate,
+          veterinario: req.body.veterinario,
+          estado: { in: ["PENDIENTE", "CONFIRMADA"] },
+        },
+      });
+      if (conflictoHorario) {
+        throw ApiError.badRequest(
+          `El veterinario ${req.body.veterinario} ya tiene una cita programada en esa fecha y hora`
+        );
+      }
+    }
+  }
+
   const appointment = await prisma.appointment.create({ data: req.body, include });
   res.status(201).json(appointment);
 }
 
 export async function update(req: Request, res: Response) {
   const id = parseIdParam(req.params.id);
+
+  if (req.body.fecha && req.body.veterinario) {
+    const appointmentDate = new Date(req.body.fecha);
+    if (!isNaN(appointmentDate.getTime())) {
+      const conflictoHorario = await prisma.appointment.findFirst({
+        where: {
+          id: { not: id },
+          fecha: appointmentDate,
+          veterinario: req.body.veterinario,
+          estado: { in: ["PENDIENTE", "CONFIRMADA"] },
+        },
+      });
+      if (conflictoHorario) {
+        throw ApiError.badRequest(
+          `El veterinario ${req.body.veterinario} ya tiene otra cita programada en esa fecha y hora`
+        );
+      }
+    }
+  }
+
   const appointment = await prisma.appointment.update({ where: { id }, data: req.body, include });
   res.json(appointment);
 }
