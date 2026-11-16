@@ -8,7 +8,7 @@ RUN npm ci
 COPY . .
 
 # URL del backend consumida en tiempo de compilación por Vite
-ARG VITE_API_URL=https://vetcare-backend.onrender.com/api
+ARG VITE_API_URL=https://vetcare-backend-97in.onrender.com/api
 ENV VITE_API_URL=$VITE_API_URL
 
 RUN npm run build
