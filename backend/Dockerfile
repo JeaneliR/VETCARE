@@ -2,6 +2,10 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
+# Alpine no trae OpenSSL por defecto; sin esto el motor de Prisma no
+# arranca ("Prisma failed to detect the libssl/openssl version").
+RUN apk add --no-cache openssl
+
 COPY package*.json ./
 RUN npm ci
 
@@ -17,6 +21,8 @@ FROM node:20-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 
+RUN apk add --no-cache openssl
+
 COPY package*.json ./
 RUN npm ci --omit=dev
 
@@ -26,9 +32,6 @@ RUN npx prisma generate
 COPY --from=build /app/dist ./dist
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
-
-# Carpeta donde vivirá el archivo SQLite (se monta como volumen en docker-compose)
-RUN mkdir -p /app/data
 
 EXPOSE 4000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \

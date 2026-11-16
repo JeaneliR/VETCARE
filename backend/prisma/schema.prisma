@@ -2,7 +2,12 @@
 // Curso: Herramienta de Desarrollo (React + TypeScript + Node/Express + Prisma)
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // "native" para desarrollo local (Windows/Mac/Linux glibc) y
+  // "linux-musl-openssl-3.0.x" para la imagen de Docker (node:20-alpine,
+  // que usa musl + OpenSSL 3.x). Sin este segundo target, el motor de
+  // Prisma no logra detectar OpenSSL dentro del contenedor y falla.
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
