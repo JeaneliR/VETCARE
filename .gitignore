@@ -13,9 +13,7 @@ build/
 **/.env
 **/.env.local
 
-# Base de datos SQLite local (cada quien genera la suya con prisma migrate + seed)
-backend/prisma/dev.db
-backend/prisma/dev.db-journal
+# Por si alguien corre algo con SQLite localmente (el proyecto usa Postgres)
 *.db
 *.db-journal
 

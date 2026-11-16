@@ -58,8 +58,8 @@ export async function summary(req: Request, res: Response) {
   });
 
   // Citas de los últimos 7 días (incluye hoy), para la mini gráfica de
-  // barras del dashboard. Se agrupa en JS porque SQLite/Prisma no tienen
-  // un "group by día" cómodo entre motores.
+  // barras del dashboard. Se agrupa en JS porque Prisma no tiene un
+  // "group by día" portable entre motores de base de datos.
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setHours(0, 0, 0, 0);
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);

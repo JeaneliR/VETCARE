@@ -1,19 +1,38 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: vetcare-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: vetcare
+      POSTGRES_USER: vetcare
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-vetcare-local}"
+    volumes:
+      - vetcare_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vetcare -d vetcare"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - vetcare-net
+
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: vetcare-backend
     restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
-      DATABASE_URL: "file:/app/data/vetcare.db"
+      DATABASE_URL: "postgresql://vetcare:${POSTGRES_PASSWORD:-vetcare-local}@db:5432/vetcare"
       PORT: "4000"
       CORS_ORIGIN: "http://localhost:8080"
       JWT_SECRET: "${JWT_SECRET:-vetcare-secreto-de-desarrollo-cambiar-en-produccion}"
       JWT_EXPIRES_IN: "${JWT_EXPIRES_IN:-12h}"
       SEED_ON_START: "${SEED_ON_START:-false}"
-    volumes:
-      - vetcare_db:/app/data
     ports:
       - "4000:4000"
     networks:
