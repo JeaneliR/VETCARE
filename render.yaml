@@ -1,3 +1,13 @@
+databases:
+  # Plan gratuito de Render Postgres: expira a los 30 días (con 14 días de
+  # gracia para pasarla a un plan pago antes de que se borre). Suficiente
+  # para el curso; si se necesita más tiempo, hay que recrearla o subirla
+  # de plan antes de que expire.
+  - name: vetcare-db
+    databaseName: vetcare
+    user: vetcare
+    plan: free
+
 services:
   - type: web
     name: vetcare-backend
@@ -8,7 +18,9 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: DATABASE_URL
-        value: file:/app/data/vetcare.db
+        fromDatabase:
+          name: vetcare-db
+          property: connectionString
       - key: PORT
         value: "4000"
       - key: CORS_ORIGIN
@@ -17,12 +29,17 @@ services:
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 12h
+      # OJO: SEED_ON_START=true borra y vuelve a poblar la base en CADA
+      # arranque del contenedor (incluido cuando Render lo despierta tras
+      # dormirse por inactividad en el plan free). Déjalo en "true" solo
+      # para el primer deploy (para tener el usuario admin inicial); luego
+      # cámbialo a "false" en Render → vetcare-backend → Environment, para
+      # no perder los datos reales que se vayan cargando.
       - key: SEED_ON_START
         value: "true"
-    disk:
-      name: vetcare-data
-      mountPath: /app/data
-      sizeGB: 1
+    # Sin disco: el plan free de Render no soporta discos persistentes en
+    # servicios web. Los datos ahora viven en Postgres (vetcare-db, arriba),
+    # que sí persiste entre reinicios/redeploys.
 
   - type: web
     name: vetcare-frontend

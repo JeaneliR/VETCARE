@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -83,9 +83,9 @@ model Owner {
 // ---------------------------------------------------------------------------
 // MODULO: Mascotas (Pets)
 // ---------------------------------------------------------------------------
-// Nota: SQLite no soporta el tipo `enum` nativo de Prisma, así que estos
-// campos se guardan como String y se validan en la API con Zod (ver
-// src/schemas/pet.schema.ts). Valores válidos:
+// Nota: se guardan como String (en vez de un `enum` nativo de Prisma) para
+// no atarnos a un tipo de base de datos específico, y se validan en la API
+// con Zod (ver src/schemas/pet.schema.ts). Valores válidos:
 // especie: PERRO | GATO | AVE | ROEDOR | REPTIL | OTRO
 // sexo: MACHO | HEMBRA
 model Pet {

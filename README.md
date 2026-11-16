@@ -49,9 +49,9 @@ valor de `JWT_SECRET` en `backend/.env`.
 
 - **Frontend:** React 18 + TypeScript + Vite + React Router + Tailwind CSS + Axios
 - **Backend:** Node.js + Express + TypeScript + Zod (validación)
-- **Base de datos:** SQLite gestionada con Prisma ORM (fácil de correr en cualquier
-  laptop sin instalar un motor de base de datos aparte; se puede migrar a
-  PostgreSQL/MySQL cambiando solo el `datasource` en `schema.prisma`)
+- **Base de datos:** PostgreSQL gestionada con Prisma ORM (local con
+  `docker compose up db`, o una instancia propia; en producción usa el
+  Postgres gratuito de Render, ver `render.yaml`)
 
 ## Estructura del proyecto
 
@@ -100,8 +100,9 @@ vetcare-manager/
 ```bash
 cd backend
 npm install                   # instala también bcryptjs y jsonwebtoken (login)
-cp .env.example .env          # incluye JWT_SECRET y JWT_EXPIRES_IN; ajusta si quieres
-npx prisma migrate dev --name init   # crea la base de datos SQLite y las tablas (incluye usuarios y permisos)
+docker compose up -d db        # levanta Postgres local (o usa tu propia instancia)
+cp .env.example .env          # incluye JWT_SECRET, JWT_EXPIRES_IN y DATABASE_URL; ajusta si quieres
+npx prisma migrate deploy     # aplica las migraciones (crea las tablas, incluye usuarios y permisos)
 npm run seed                  # carga datos de ejemplo + las 3 cuentas de prueba de arriba
 npm run dev                   # inicia el servidor en http://localhost:4000
 ```
