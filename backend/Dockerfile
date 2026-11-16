@@ -30,6 +30,14 @@ COPY prisma ./prisma
 RUN npx prisma generate
 
 COPY --from=build /app/dist ./dist
+
+# El seed (prisma/seed.ts) corre con ts-node directamente sobre el código
+# fuente e importa cosas de src/ (ej. src/utils/auth.ts para el hash de
+# contraseñas), así que también necesita tsconfig.json y src/ en esta
+# imagen, aunque la app ya corra desde dist/.
+COPY tsconfig.json ./
+COPY src ./src
+
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
 
