@@ -35,6 +35,10 @@ Thumbs.db
 # Prisma generado
 backend/generated/
 
+# Cobertura de pruebas (Jest)
+coverage/
+**/coverage/
+
 # Archivos generados por TypeScript y Vite
 *.tsbuildinfo
 frontend/vite.config.js
