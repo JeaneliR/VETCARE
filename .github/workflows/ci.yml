@@ -1,0 +1,34 @@
+name: CI Integración Continua
+
+on:
+  push:
+    branches: [ develop, main ]
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  verificar-calidad:
+    name: Compilación y Verificación de Backend y Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar código fuente
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js (v20)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar y compilar Backend
+        run: |
+          cd backend
+          npm install
+          npx prisma generate
+          npm run build
+
+      - name: Instalar y compilar Frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build

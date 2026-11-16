@@ -4,8 +4,10 @@ import { Vaccine } from "../types";
 export type VaccineInput = Omit<Vaccine, "id" | "mascota">;
 
 export const vaccinesService = {
-  list: (mascotaId?: number) =>
-    api.get<Vaccine[]>("/vacunas", { params: mascotaId ? { mascotaId } : {} }).then((r) => r.data),
+  list: (params?: number | { mascotaId?: number; estado?: string; orden?: string }) => {
+    const query = typeof params === "number" ? { mascotaId: params } : params ?? {};
+    return api.get<Vaccine[]>("/vacunas", { params: query }).then((r) => r.data);
+  },
   getById: (id: number) => api.get<Vaccine>(`/vacunas/${id}`).then((r) => r.data),
   create: (data: VaccineInput) => api.post<Vaccine>("/vacunas", data).then((r) => r.data),
   update: (id: number, data: Partial<VaccineInput>) =>

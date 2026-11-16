@@ -1,0 +1,25 @@
+name: CD Entrega Continua (Render)
+
+# Se dispara solo después de que el workflow de CI termine en la rama main,
+# y solo si ese CI terminó en éxito. Así nunca se despliega código que no compiló
+# o que rompió las pruebas.
+on:
+  workflow_run:
+    workflows: ["CI Integración Continua"]
+    types: [completed]
+    branches: [ main ]
+
+jobs:
+  desplegar:
+    name: Desplegar en Render
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Disparar despliegue del backend en Render
+        if: ${{ secrets.RENDER_DEPLOY_HOOK_BACKEND != '' }}
+        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}"
+
+      - name: Disparar despliegue del frontend en Render
+        if: ${{ secrets.RENDER_DEPLOY_HOOK_FRONTEND != '' }}
+        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_FRONTEND }}"

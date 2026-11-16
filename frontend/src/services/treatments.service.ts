@@ -4,10 +4,10 @@ import { Treatment } from "../types";
 export type TreatmentInput = Omit<Treatment, "id" | "mascota">;
 
 export const treatmentsService = {
-  list: (mascotaId?: number) =>
-    api
-      .get<Treatment[]>("/tratamientos", { params: mascotaId ? { mascotaId } : {} })
-      .then((r) => r.data),
+  list: (params?: number | { mascotaId?: number; estado?: string }) => {
+    const query = typeof params === "number" ? { mascotaId: params } : params ?? {};
+    return api.get<Treatment[]>("/tratamientos", { params: query }).then((r) => r.data);
+  },
   getById: (id: number) => api.get<Treatment>(`/tratamientos/${id}`).then((r) => r.data),
   create: (data: TreatmentInput) => api.post<Treatment>("/tratamientos", data).then((r) => r.data),
   update: (id: number, data: Partial<TreatmentInput>) =>

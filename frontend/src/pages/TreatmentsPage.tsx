@@ -41,6 +41,7 @@ export default function TreatmentsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [estadoFilter, setEstadoFilter] = useState<EstadoTratamiento | "">("");
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Treatment | null>(null);
@@ -54,7 +55,10 @@ export default function TreatmentsPage() {
   async function loadData() {
     setLoading(true);
     try {
-      const [treatmentsData, petsData] = await Promise.all([treatmentsService.list(), petsService.list()]);
+      const [treatmentsData, petsData] = await Promise.all([
+        treatmentsService.list(estadoFilter ? { estado: estadoFilter } : undefined),
+        petsService.list(),
+      ]);
       setTreatments(treatmentsData);
       setPets(petsData);
     } catch (err) {
@@ -66,7 +70,8 @@ export default function TreatmentsPage() {
 
   useEffect(() => {
     loadData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [estadoFilter]);
 
   const petOptions = useMemo(() => pets.map((p) => ({ value: p.id, label: p.nombre })), [pets]);
 
@@ -148,6 +153,22 @@ export default function TreatmentsPage() {
         action={canManage ? <Button onClick={openCreate}>+ Nuevo tratamiento</Button> : undefined}
       />
 
+      <div className="mb-4 flex flex-wrap gap-2">
+        {(["", "EN_CURSO", "FINALIZADO", "SUSPENDIDO"] as const).map((estado) => (
+          <button
+            key={estado || "todos"}
+            onClick={() => setEstadoFilter(estado)}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              estadoFilter === estado
+                ? "bg-brand-600 text-white"
+                : "border border-slate-300 bg-white text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            {estado ? ESTADO_TRATAMIENTO_LABELS[estado] : "Todos"}
+          </button>
+        ))}
+      </div>
+
       {error && <Alert message={error} onDismiss={() => setError("")} />}
       {success && <Alert type="success" message={success} onDismiss={() => setSuccess("")} />}
 
@@ -177,31 +198,17 @@ export default function TreatmentsPage() {
         />
       )}
 
-      <Modal
-        open={modalOpen}
-        title={editing ? "Editar tratamiento" : "Nuevo tratamiento"}
-        onClose={() => setModalOpen(false)}
-        widthClass="max-w-xl"
-      >
+      <Modal open={modalOpen} title={editing ? "Editar tratamiento" : "Nuevo tratamiento"} onClose={() => setModalOpen(false)}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {formError && <Alert message={formError} />}
-          <div className="grid grid-cols-2 gap-4">
-            <SelectField
-              label="Mascota"
-              required
-              options={petOptions}
-              value={form.mascotaId || ""}
-              onChange={(e) => setForm({ ...form, mascotaId: Number(e.target.value) })}
-              placeholder="Selecciona una mascota"
-            />
-            <SelectField
-              label="Estado"
-              required
-              options={Object.entries(ESTADO_TRATAMIENTO_LABELS).map(([value, label]) => ({ value, label }))}
-              value={form.estado}
-              onChange={(e) => setForm({ ...form, estado: e.target.value as EstadoTratamiento })}
-            />
-          </div>
+          <SelectField
+            label="Mascota"
+            required
+            options={petOptions}
+            value={form.mascotaId || ""}
+            onChange={(e) => setForm({ ...form, mascotaId: Number(e.target.value) })}
+            placeholder="Selecciona una mascota"
+          />
           <InputField
             label="Diagnóstico"
             required
@@ -209,7 +216,7 @@ export default function TreatmentsPage() {
             onChange={(e) => setForm({ ...form, diagnostico: e.target.value })}
           />
           <TextareaField
-            label="Descripción del tratamiento"
+            label="Descripción"
             required
             value={form.descripcion}
             onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
@@ -234,12 +241,25 @@ export default function TreatmentsPage() {
               onChange={(e) => setForm({ ...form, fechaFin: e.target.value })}
             />
           </div>
-          <InputField
-            label="Veterinario"
-            required
-            value={form.veterinario}
-            onChange={(e) => setForm({ ...form, veterinario: e.target.value })}
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <InputField
+              label="Veterinario"
+              required
+              value={form.veterinario}
+              onChange={(e) => setForm({ ...form, veterinario: e.target.value })}
+            />
+            <SelectField
+              label="Estado"
+              required
+              options={[
+                { value: "EN_CURSO", label: "En curso" },
+                { value: "FINALIZADO", label: "Finalizado" },
+                { value: "SUSPENDIDO", label: "Suspendido" },
+              ]}
+              value={form.estado}
+              onChange={(e) => setForm({ ...form, estado: e.target.value as EstadoTratamiento })}
+            />
+          </div>
           <div className="mt-2 flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>
               Cancelar
