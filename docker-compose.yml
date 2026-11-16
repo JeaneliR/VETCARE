@@ -1,0 +1,42 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vetcare-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: "file:/app/data/vetcare.db"
+      PORT: "4000"
+      CORS_ORIGIN: "http://localhost:8080"
+      JWT_SECRET: "${JWT_SECRET:-vetcare-secreto-de-desarrollo-cambiar-en-produccion}"
+      JWT_EXPIRES_IN: "${JWT_EXPIRES_IN:-12h}"
+      SEED_ON_START: "${SEED_ON_START:-false}"
+    volumes:
+      - vetcare_db:/app/data
+    ports:
+      - "4000:4000"
+    networks:
+      - vetcare-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: "${VITE_API_URL:-http://localhost:4000/api}"
+    container_name: vetcare-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+    networks:
+      - vetcare-net
+
+networks:
+  vetcare-net:
+    driver: bridge
+
+volumes:
+  vetcare_db:
