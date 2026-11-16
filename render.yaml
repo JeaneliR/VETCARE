@@ -30,5 +30,8 @@ services:
     dockerfilePath: ./frontend/Dockerfile
     dockerContext: ./frontend
     plan: free
-    dockerBuildArgs:
-      VITE_API_URL: https://vetcare-backend.onrender.com/api
+    # Render no soporta pasar build args por Blueprint (no existe un campo
+    # para esto en el render.yaml spec); por eso la URL del backend en
+    # producción queda como valor por defecto del ARG en frontend/Dockerfile.
+    # docker-compose.yml (uso local) sigue pasando su propio build arg y no
+    # se ve afectado por este valor por defecto.
