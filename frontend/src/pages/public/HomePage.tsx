@@ -34,6 +34,8 @@ const services = [
       "Su información, historial y visitas organizados en un solo lugar.",
     color: "bg-emerald-100",
     accent: "text-emerald-700",
+    hoverStyle:
+      "hover:bg-emerald-50 hover:border-emerald-200 hover:shadow-emerald-900/5",
   },
   {
     icon: "📅",
@@ -42,6 +44,8 @@ const services = [
       "Agenda una consulta con el especialista y la sede que prefieras.",
     color: "bg-sky-100",
     accent: "text-sky-700",
+    hoverStyle:
+      "hover:bg-sky-50 hover:border-sky-200 hover:shadow-sky-900/5",
   },
   {
     icon: "💉",
@@ -50,6 +54,8 @@ const services = [
       "Controla sus vacunas y mantén al día sus próximas dosis.",
     color: "bg-rose-100",
     accent: "text-rose-700",
+    hoverStyle:
+      "hover:bg-rose-50 hover:border-rose-200 hover:shadow-rose-900/5",
   },
   {
     icon: "🩺",
@@ -58,6 +64,8 @@ const services = [
       "Seguimiento de diagnósticos y cuidados durante su recuperación.",
     color: "bg-violet-100",
     accent: "text-violet-700",
+    hoverStyle:
+      "hover:bg-violet-50 hover:border-violet-200 hover:shadow-violet-900/5",
   },
   {
     icon: "✂️",
@@ -66,6 +74,8 @@ const services = [
       "Baño, corte, deslanado y cuidado para que luzca genial.",
     color: "bg-orange-100",
     accent: "text-orange-700",
+    hoverStyle:
+      "hover:bg-orange-50 hover:border-orange-200 hover:shadow-orange-900/5",
   },
   {
     icon: "📍",
@@ -74,6 +84,8 @@ const services = [
       "Encuentra un centro veterinario cerca de donde te encuentres.",
     color: "bg-teal-100",
     accent: "text-teal-700",
+    hoverStyle:
+      "hover:bg-teal-50 hover:border-teal-200 hover:shadow-teal-900/5",
   },
 ];
 
@@ -233,7 +245,7 @@ export default function HomePage() {
       </header>
 
       <main>
-        {/* Portada principal con fotografía y mascotas animadas */}
+        {/* Portada principal */}
         <section
           id="inicio"
           className="relative isolate scroll-mt-20 overflow-hidden bg-gradient-to-br from-cyan-50 via-white to-emerald-50"
@@ -348,7 +360,7 @@ export default function HomePage() {
               {services.map((service) => (
                 <article
                   key={service.title}
-                  className="group rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-teal-100 hover:shadow-xl hover:shadow-teal-900/5"
+                  className={`group rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl ${service.hoverStyle}`}
                 >
                   <div
                     className={`flex h-14 w-14 items-center justify-center rounded-2xl ${service.color} text-3xl transition group-hover:rotate-3`}
