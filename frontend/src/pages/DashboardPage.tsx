@@ -185,7 +185,7 @@ export default function DashboardPage() {
             <StatCard label="Mascotas registradas" value={summary.totalMascotas} icon="🐾" />
             <StatCard label="Dueños registrados" value={summary.totalDuenos} icon="👤" />
             <StatCard label="Sedes activas" value={summary.totalSedes} icon="📍" />
-            <StatCard label="Citas hoy" value={summary.citasHoy} icon="📅" accent="bg-sky-50 text-sky-700" />
+            <StatCard label="Citas hoy" value={summary.citasHoy} icon="📅" accent="bg-ocean-50 text-ocean-700" />
             <StatCard
               label="Citas pendientes"
               value={summary.citasPendientes}
@@ -196,25 +196,25 @@ export default function DashboardPage() {
               label="Vacunas próx. 30 días"
               value={summary.vacunasProximas}
               icon="💉"
-              accent="bg-violet-50 text-violet-700"
+              accent="bg-ocean-50 text-ocean-700"
             />
             <StatCard
               label="Tratamientos en curso"
               value={summary.tratamientosEnCurso}
               icon="🩺"
-              accent="bg-rose-50 text-rose-700"
+              accent="bg-brand-50 text-brand-700"
             />
             <StatCard
               label="Baños/cortes del mes"
               value={summary.serviciosGroomingMes}
               icon="✂️"
-              accent="bg-teal-50 text-teal-700"
+              accent="bg-brand-50 text-brand-700"
             />
             <StatCard
               label="Ingresos grooming (mes)"
               value={formatCurrency(summary.ingresosGroomingMes)}
               icon="💰"
-              accent="bg-emerald-50 text-emerald-700"
+              accent="bg-ocean-50 text-ocean-700"
             />
           </div>
 
