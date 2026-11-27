@@ -131,6 +131,61 @@ npm run dev                   # inicia la app en http://localhost:5173
 
 Con ambos servidores corriendo, abre `http://localhost:5173` en el navegador.
 
+## Contenedores (Docker Compose) y monitoreo
+
+Todo el stack (frontend, backend, base de datos y monitoreo) puede levantarse
+con un solo comando, sin instalar Node ni Postgres en tu máquina:
+
+```bash
+docker compose up --build -d
+```
+
+Esto levanta 5 contenedores, todos en la misma red (`vetcare-net`):
+
+| Servicio | Imagen | URL local | Para qué sirve |
+|---|---|---|---|
+| `db` | `postgres:16-alpine` | — (interno) | Base de datos, con volumen propio (`vetcare_db`) |
+| `backend` | build de `backend/Dockerfile` | http://localhost:4000 | API REST |
+| `frontend` | build de `frontend/Dockerfile` | http://localhost:8080 | App servida con nginx |
+| `prometheus` | `prom/prometheus` | http://localhost:9090 | Recolecta métricas del backend cada 15s |
+| `grafana` | `grafana/grafana` | http://localhost:3001 | Dashboards sobre esas métricas |
+
+Comandos útiles:
+
+```bash
+docker compose up --build -d     # construye las imágenes y levanta todo en segundo plano
+docker compose ps                # ver el estado/healthcheck de cada contenedor
+docker compose logs -f backend   # seguir los logs de un servicio en particular
+docker compose down              # detener todo (los datos de Postgres/Grafana se conservan en sus volúmenes)
+docker compose down -v           # detener todo y borrar también los volúmenes (datos desde cero)
+```
+
+### Monitoreo con Prometheus + Grafana
+
+El backend expone métricas en formato Prometheus en `GET /api/metrics`
+(además del ya existente `GET /api/health`), usando la librería `prom-client`:
+métricas estándar de Node.js (uso de memoria, lag del event loop, CPU) más dos
+métricas propias de la API, `vetcare_http_requests_total` y
+`vetcare_http_request_duration_seconds`, con etiquetas por método, ruta y
+código de estado.
+
+Prometheus (`docker/prometheus/prometheus.yml`) ya está configurado para
+"scrapear" `backend:4000/api/metrics` automáticamente. Grafana ya viene con el
+datasource de Prometheus y un dashboard (`VetCare — Panorama de la API`)
+**provisionados automáticamente** — no hace falta configurar nada a mano:
+
+1. Abre http://localhost:3001
+2. Inicia sesión con `admin` / `admin` (definidos por las variables
+   `GRAFANA_ADMIN_USER` / `GRAFANA_ADMIN_PASSWORD`; cámbialas en un `.env` si
+   vas a dejarlo expuesto)
+3. El dashboard "VetCare — Panorama de la API" ya está en la lista, con
+   paneles de solicitudes por segundo por ruta, tasa de errores 5xx, latencia
+   p95, memoria usada, lag del event loop y desglose de solicitudes por
+   código de estado.
+
+Para generar tráfico y ver los paneles moverse, basta con usar la app
+normalmente (http://localhost:8080) o pegarle con `curl` al backend.
+
 ## Endpoints principales de la API
 
 Todos bajo el prefijo `/api`. Salvo `POST /auth/login` y los `GET` de `/sedes`

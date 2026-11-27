@@ -53,9 +53,44 @@ services:
     networks:
       - vetcare-net
 
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: vetcare-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - vetcare_prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    depends_on:
+      - backend
+    networks:
+      - vetcare-net
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: vetcare-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: "${GRAFANA_ADMIN_USER:-admin}"
+      GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_ADMIN_PASSWORD:-admin}"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - vetcare_grafana_data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./docker/grafana/dashboards:/etc/grafana/provisioning/dashboards/files:ro
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - vetcare-net
+
 networks:
   vetcare-net:
     driver: bridge
 
 volumes:
   vetcare_db:
+  vetcare_prometheus_data:
+  vetcare_grafana_data:

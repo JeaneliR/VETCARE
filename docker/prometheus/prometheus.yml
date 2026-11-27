@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: vetcare-backend
+    metrics_path: /api/metrics
+    static_configs:
+      - targets: ["backend:4000"]
+
+  # Prometheus también se monitorea a sí mismo (métrica estándar de ejemplo
+  # en cualquier instalación de Prometheus).
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
