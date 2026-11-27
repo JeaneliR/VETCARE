@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { Scissors, Search } from "lucide-react";
 import PageHeader from "../components/PageHeader";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
@@ -195,9 +196,9 @@ export default function GroomingPage() {
       {loading ? (
         <Spinner />
       ) : services.length === 0 ? (
-        <EmptyState icon="✂️" title="No hay servicios registrados" description="Registra el primer servicio con el botón de arriba." />
+        <EmptyState icon={Scissors} title="No hay servicios registrados" description="Registra el primer servicio con el botón de arriba." />
       ) : filteredServices.length === 0 ? (
-        <EmptyState icon="🔍" title="Ningún servicio coincide con el filtro" description="Prueba con otro tipo de servicio o sede." />
+        <EmptyState icon={Search} title="Ningún servicio coincide con el filtro" description="Prueba con otro tipo de servicio o sede." />
       ) : (
         <DataTable
           columns={columns}

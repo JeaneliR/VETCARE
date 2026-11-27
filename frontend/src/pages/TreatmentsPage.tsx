@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { Stethoscope } from "lucide-react";
 import PageHeader from "../components/PageHeader";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
@@ -175,7 +176,7 @@ export default function TreatmentsPage() {
       {loading ? (
         <Spinner />
       ) : treatments.length === 0 ? (
-        <EmptyState icon="🩺" title="No hay tratamientos registrados" description="Registra el primer tratamiento con el botón de arriba." />
+        <EmptyState icon={Stethoscope} title="No hay tratamientos registrados" description="Registra el primer tratamiento con el botón de arriba." />
       ) : (
         <DataTable
           columns={columns}

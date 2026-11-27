@@ -1,16 +1,28 @@
-
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import {
+  Home,
+  Users,
+  PawPrint,
+  Calendar,
+  Syringe,
+  Stethoscope,
+  Scissors,
+  MapPin,
+  UserCog,
+  Heart,
+  LogOut,
+} from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 const baseLinks = [
-  { to: "/app", label: "Inicio", icon: "🏡", end: true, color: "brand" },
-  { to: "/app/duenos", label: "Dueños", icon: "💼", color: "ocean" },
-  { to: "/app/mascotas", label: "Mascotas", icon: "🐾", color: "brand" },
-  { to: "/app/citas", label: "Citas", icon: "📅", color: "ocean" },
-  { to: "/app/vacunas", label: "Vacunas", icon: "💉", color: "brand" },
-  { to: "/app/tratamientos", label: "Tratamientos", icon: "🩺", color: "ocean" },
-  { to: "/app/banos-cortes", label: "Baños y cortes", icon: "🛁", color: "brand" },
-  { to: "/app/sedes", label: "Sedes", icon: "📍", color: "ocean" },
+  { to: "/app", label: "Inicio", icon: Home, end: true, color: "brand" },
+  { to: "/app/duenos", label: "Dueños", icon: Users, color: "ocean" },
+  { to: "/app/mascotas", label: "Mascotas", icon: PawPrint, color: "brand" },
+  { to: "/app/citas", label: "Citas", icon: Calendar, color: "ocean" },
+  { to: "/app/vacunas", label: "Vacunas", icon: Syringe, color: "brand" },
+  { to: "/app/tratamientos", label: "Tratamientos", icon: Stethoscope, color: "ocean" },
+  { to: "/app/banos-cortes", label: "Baños y cortes", icon: Scissors, color: "brand" },
+  { to: "/app/sedes", label: "Sedes", icon: MapPin, color: "ocean" },
 ];
 
 const iconColors: Record<string, string> = {
@@ -29,7 +41,7 @@ export default function Layout() {
           {
             to: "/app/usuarios",
             label: "Usuarios",
-            icon: "👥",
+            icon: UserCog,
             color: "brand",
           },
         ]
@@ -53,7 +65,7 @@ export default function Layout() {
     .toUpperCase();
 
   return (
-    <div className="flex min-h-screen bg-[#f6f9fa] text-slate-800">
+    <div className="flex h-screen overflow-hidden bg-[#f6f9fa] text-slate-800">
 
       {/* =====================================
           BARRA LATERAL PARA ESCRITORIO
@@ -71,8 +83,8 @@ export default function Layout() {
           to="/app"
           className="flex items-center gap-3 border-b border-slate-100 px-5 py-6"
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-100 text-2xl shadow-sm">
-            🐾
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-100 text-brand-700 shadow-sm">
+            <PawPrint className="h-6 w-6" strokeWidth={2} />
           </div>
 
           <div>
@@ -110,13 +122,13 @@ export default function Layout() {
               {({ isActive }) => (
                 <>
                   <span
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg transition-transform duration-200 group-hover:scale-105 ${
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105 ${
                       isActive
-                        ? "bg-brand-200"
-                        : iconColors[link.color]
+                        ? "bg-brand-200 text-brand-800"
+                        : `${iconColors[link.color]} text-slate-600`
                     }`}
                   >
-                    {link.icon}
+                    <link.icon className="h-5 w-5" strokeWidth={2} />
                   </span>
 
                   <span className="flex-1">{link.label}</span>
@@ -138,7 +150,7 @@ export default function Layout() {
               ¡Mucho amor!
             </span>
 
-            <span className="text-2xl">🐶</span>
+            <Heart className="h-5 w-5 text-brand-500" strokeWidth={2} />
           </div>
 
           <p className="text-xs leading-relaxed text-slate-500">
@@ -180,7 +192,7 @@ export default function Layout() {
               aria-label="Cerrar sesión"
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
             >
-              ↪
+              <LogOut className="h-4 w-4" strokeWidth={2} />
             </button>
           </div>
 
@@ -207,14 +219,14 @@ export default function Layout() {
           CONTENIDO DE LA APLICACIÓN
       ====================================== */}
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
 
         {/* Cabecera móvil */}
 
         <header className="sticky top-0 z-30 flex items-center justify-between border-b border-brand-100 bg-white/95 px-4 py-3 backdrop-blur-xl md:hidden">
           <Link to="/app" className="flex items-center gap-2.5">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-100 text-xl">
-              🐾
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-100 text-brand-700">
+              <PawPrint className="h-5 w-5" strokeWidth={2} />
             </span>
 
             <span className="text-lg font-black tracking-tight text-brand-800">
@@ -264,7 +276,7 @@ export default function Layout() {
                 }`
               }
             >
-              <span className="text-lg leading-5">{link.icon}</span>
+              <link.icon className="h-5 w-5" strokeWidth={2} />
 
               <span className="max-w-full truncate">{link.label}</span>
             </NavLink>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { PawPrint, Calendar, Syringe, Stethoscope, Scissors } from "lucide-react";
 import PageHeader from "../components/PageHeader";
 import Spinner from "../components/Spinner";
 import Alert from "../components/Alert";
@@ -54,8 +55,8 @@ export default function PetDetailPage() {
             {pet.fotoUrl ? (
               <img src={pet.fotoUrl} alt={pet.nombre} className="h-16 w-16 rounded-full object-cover" />
             ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-50 text-3xl">
-                🐾
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-50 text-brand-600">
+                <PawPrint className="h-7 w-7" strokeWidth={2} />
               </div>
             )}
             <div>
@@ -104,7 +105,7 @@ export default function PetDetailPage() {
 
         <div className="space-y-6 lg:col-span-2">
           <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="mb-3 text-base font-semibold text-slate-800">📅 Citas</h2>
+            <h2 className="mb-3 flex items-center gap-2 text-base font-semibold text-slate-800"><Calendar className="h-4 w-4 text-ocean-600" strokeWidth={2} /> Citas</h2>
             {!pet.citas?.length ? (
               <p className="text-sm text-slate-500">Sin citas registradas.</p>
             ) : (
@@ -122,7 +123,7 @@ export default function PetDetailPage() {
           </section>
 
           <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="mb-3 text-base font-semibold text-slate-800">💉 Vacunas</h2>
+            <h2 className="mb-3 flex items-center gap-2 text-base font-semibold text-slate-800"><Syringe className="h-4 w-4 text-brand-600" strokeWidth={2} /> Vacunas</h2>
             {!pet.vacunas?.length ? (
               <p className="text-sm text-slate-500">Sin vacunas registradas.</p>
             ) : (
@@ -142,7 +143,7 @@ export default function PetDetailPage() {
           </section>
 
           <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="mb-3 text-base font-semibold text-slate-800">🩺 Tratamientos</h2>
+            <h2 className="mb-3 flex items-center gap-2 text-base font-semibold text-slate-800"><Stethoscope className="h-4 w-4 text-ocean-600" strokeWidth={2} /> Tratamientos</h2>
             {!pet.tratamientos?.length ? (
               <p className="text-sm text-slate-500">Sin tratamientos registrados.</p>
             ) : (
@@ -162,7 +163,7 @@ export default function PetDetailPage() {
           </section>
 
           <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="mb-3 text-base font-semibold text-slate-800">✂️ Baños y cortes</h2>
+            <h2 className="mb-3 flex items-center gap-2 text-base font-semibold text-slate-800"><Scissors className="h-4 w-4 text-brand-600" strokeWidth={2} /> Baños y cortes</h2>
             {!pet.banosCortes?.length ? (
               <p className="text-sm text-slate-500">Sin servicios de grooming registrados.</p>
             ) : (

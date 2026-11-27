@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { Compass } from "lucide-react";
 
 export default function NotFoundPage() {
   const location = useLocation();
@@ -6,7 +7,9 @@ export default function NotFoundPage() {
 
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
-      <p className="text-6xl">🐾</p>
+      <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-50 text-brand-500">
+        <Compass className="h-8 w-8" strokeWidth={1.75} />
+      </span>
       <h1 className="mt-4 text-2xl font-bold text-slate-800">Página no encontrada</h1>
       <p className="mt-2 text-slate-500">La ruta que buscas no existe.</p>
       <Link

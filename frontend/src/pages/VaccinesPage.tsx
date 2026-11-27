@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { Syringe } from "lucide-react";
 import PageHeader from "../components/PageHeader";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
@@ -197,7 +198,7 @@ export default function VaccinesPage() {
       {loading ? (
         <Spinner />
       ) : vaccines.length === 0 ? (
-        <EmptyState icon="💉" title="No hay vacunas registradas" description="Registra la primera vacuna con el botón de arriba." />
+        <EmptyState icon={Syringe} title="No hay vacunas registradas" description="Registra la primera vacuna con el botón de arriba." />
       ) : (
         <DataTable
           columns={columns}

@@ -1,5 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  User,
+  PawPrint,
+  Calendar,
+  Syringe,
+  Stethoscope,
+  Scissors,
+  MapPin,
+  Hourglass,
+  DollarSign,
+  Star,
+} from "lucide-react";
 import PageHeader from "../components/PageHeader";
 import StatCard from "../components/StatCard";
 import Spinner from "../components/Spinner";
@@ -182,38 +194,38 @@ export default function DashboardPage() {
       {summary && (
         <>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            <StatCard label="Mascotas registradas" value={summary.totalMascotas} icon="🐾" />
-            <StatCard label="Dueños registrados" value={summary.totalDuenos} icon="👤" />
-            <StatCard label="Sedes activas" value={summary.totalSedes} icon="📍" />
-            <StatCard label="Citas hoy" value={summary.citasHoy} icon="📅" accent="bg-ocean-50 text-ocean-700" />
+            <StatCard label="Mascotas registradas" value={summary.totalMascotas} icon={PawPrint} />
+            <StatCard label="Dueños registrados" value={summary.totalDuenos} icon={User} />
+            <StatCard label="Sedes activas" value={summary.totalSedes} icon={MapPin} />
+            <StatCard label="Citas hoy" value={summary.citasHoy} icon={Calendar} accent="bg-ocean-50 text-ocean-700" />
             <StatCard
               label="Citas pendientes"
               value={summary.citasPendientes}
-              icon="⏳"
+              icon={Hourglass}
               accent="bg-amber-50 text-amber-700"
             />
             <StatCard
               label="Vacunas próx. 30 días"
               value={summary.vacunasProximas}
-              icon="💉"
+              icon={Syringe}
               accent="bg-ocean-50 text-ocean-700"
             />
             <StatCard
               label="Tratamientos en curso"
               value={summary.tratamientosEnCurso}
-              icon="🩺"
+              icon={Stethoscope}
               accent="bg-brand-50 text-brand-700"
             />
             <StatCard
               label="Baños/cortes del mes"
               value={summary.serviciosGroomingMes}
-              icon="✂️"
+              icon={Scissors}
               accent="bg-brand-50 text-brand-700"
             />
             <StatCard
               label="Ingresos grooming (mes)"
               value={formatCurrency(summary.ingresosGroomingMes)}
-              icon="💰"
+              icon={DollarSign}
               accent="bg-ocean-50 text-ocean-700"
             />
           </div>
@@ -241,7 +253,7 @@ export default function DashboardPage() {
             <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
               <h2 className="mb-3 text-base font-semibold text-slate-800">Próximas citas</h2>
               {summary.proximasCitas.length === 0 ? (
-                <EmptyState icon="📅" title="No hay citas próximas" />
+                <EmptyState icon={Calendar} title="No hay citas próximas" />
               ) : (
                 <ul className="divide-y divide-slate-100">
                   {summary.proximasCitas.map((cita) => (
@@ -322,7 +334,7 @@ export default function DashboardPage() {
                 </Link>
               </div>
               {reviews.length === 0 ? (
-                <EmptyState icon="⭐" title="Sin reseñas todavía" />
+                <EmptyState icon={Star} title="Sin reseñas todavía" />
               ) : (
                 <ul className="space-y-3">
                   {reviews.map((review) => (
@@ -381,20 +393,22 @@ export default function DashboardPage() {
 
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
             {[
-              { to: "/app/duenos", label: "Dueños", icon: "👤" },
-              { to: "/app/mascotas", label: "Mascotas", icon: "🐾" },
-              { to: "/app/citas", label: "Citas", icon: "📅" },
-              { to: "/app/vacunas", label: "Vacunas", icon: "💉" },
-              { to: "/app/tratamientos", label: "Tratamientos", icon: "🩺" },
-              { to: "/app/banos-cortes", label: "Baños/Cortes", icon: "✂️" },
-              { to: "/app/sedes", label: "Sedes", icon: "📍" },
+              { to: "/app/duenos", label: "Dueños", icon: User },
+              { to: "/app/mascotas", label: "Mascotas", icon: PawPrint },
+              { to: "/app/citas", label: "Citas", icon: Calendar },
+              { to: "/app/vacunas", label: "Vacunas", icon: Syringe },
+              { to: "/app/tratamientos", label: "Tratamientos", icon: Stethoscope },
+              { to: "/app/banos-cortes", label: "Baños/Cortes", icon: Scissors },
+              { to: "/app/sedes", label: "Sedes", icon: MapPin },
             ].map((shortcut) => (
               <Link
                 key={shortcut.to}
                 to={shortcut.to}
                 className="flex flex-col items-center gap-2 rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
               >
-                <span className="text-2xl">{shortcut.icon}</span>
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
+                  <shortcut.icon className="h-5 w-5" strokeWidth={2} />
+                </span>
                 <span className="text-xs font-medium text-slate-600">{shortcut.label}</span>
               </Link>
             ))}

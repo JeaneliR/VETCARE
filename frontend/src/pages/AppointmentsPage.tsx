@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { Calendar } from "lucide-react";
 import PageHeader from "../components/PageHeader";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
@@ -185,7 +186,7 @@ export default function AppointmentsPage() {
       {loading ? (
         <Spinner />
       ) : appointments.length === 0 ? (
-        <EmptyState icon="📅" title="No hay citas registradas" description="Agenda la primera cita con el botón de arriba." />
+        <EmptyState icon={Calendar} title="No hay citas registradas" description="Agenda la primera cita con el botón de arriba." />
       ) : (
         <DataTable
           columns={columns}

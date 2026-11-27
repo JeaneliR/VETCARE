@@ -1,3 +1,5 @@
+import { X } from "lucide-react";
+
 interface AlertProps {
   type?: "error" | "success";
   message: string;
@@ -15,7 +17,7 @@ export default function Alert({ type = "error", message, onDismiss }: AlertProps
       <span>{message}</span>
       {onDismiss && (
         <button onClick={onDismiss} className="text-current opacity-70 hover:opacity-100">
-          ✕
+          <X className="h-3.5 w-3.5" strokeWidth={2} />
         </button>
       )}
     </div>
