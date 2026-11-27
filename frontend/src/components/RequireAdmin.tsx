@@ -1,3 +1,4 @@
+import { Lock } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import EmptyState from "./EmptyState";
 
@@ -10,7 +11,7 @@ export default function RequireAdmin({ children }: { children: React.ReactNode }
   if (user?.rol !== "ADMIN") {
     return (
       <EmptyState
-        icon="🔒"
+        icon={Lock}
         title="Acceso restringido"
         description="Esta sección es solo para el administrador principal del sistema."
       />

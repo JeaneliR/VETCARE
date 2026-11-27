@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { Package } from "lucide-react";
 import PageHeader from "../components/PageHeader";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
@@ -168,7 +169,7 @@ export default function InventoryPage() {
         <Spinner />
       ) : items.length === 0 ? (
         <EmptyState
-          icon="📦"
+          icon={Package}
           title="No hay productos en inventario"
           description="Registra tu primer producto para comenzar a controlar stock y vencimientos."
         />

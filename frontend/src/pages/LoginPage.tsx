@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { PawPrint } from "lucide-react";
 import Button from "../components/Button";
 import { InputField } from "../components/FormField";
 import Alert from "../components/Alert";
@@ -38,7 +39,9 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-6 text-center">
-          <span className="text-3xl">🐾</span>
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 mx-auto">
+            <PawPrint className="h-6 w-6" strokeWidth={2} />
+          </span>
           <h1 className="mt-2 text-xl font-bold text-brand-700">Ingresar al sistema</h1>
           <p className="text-sm text-slate-500">Acceso exclusivo para el personal de VetCare</p>
         </div>

@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
+import { Users } from "lucide-react";
 import PageHeader from "../components/PageHeader";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
@@ -205,7 +206,7 @@ export default function UsersPage() {
       {loading ? (
         <Spinner />
       ) : users.length === 0 ? (
-        <EmptyState icon="👥" title="No hay usuarios registrados" />
+        <EmptyState icon={Users} title="No hay usuarios registrados" />
       ) : (
         <DataTable
           columns={columns}

@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
+import { MapPin, Phone, Clock, Building2, ExternalLink } from "lucide-react";
 import PageHeader from "../components/PageHeader";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
@@ -135,32 +136,49 @@ export default function LocationsPage() {
       {loading ? (
         <Spinner />
       ) : locations.length === 0 ? (
-        <EmptyState icon="📍" title="No hay sedes registradas" description="Registra la primera sede con el botón de arriba." />
+        <EmptyState icon={MapPin} title="No hay sedes registradas" description="Registra la primera sede con el botón de arriba." />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {locations.map((loc) => (
             <div key={loc.id} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-              {loc.imagenUrl && (
+              {loc.imagenUrl ? (
                 <img src={loc.imagenUrl} alt={loc.nombre} className="h-36 w-full object-cover" />
+              ) : loc.latitud != null && loc.longitud != null ? (
+                <iframe
+                  title={`Mapa de ${loc.nombre}`}
+                  src={`https://maps.google.com/maps?q=${loc.latitud},${loc.longitud}&z=15&output=embed`}
+                  className="h-36 w-full border-0"
+                  loading="lazy"
+                />
+              ) : (
+                <div className="flex h-36 w-full items-center justify-center bg-gradient-to-br from-brand-100 to-ocean-100 text-brand-500">
+                  <Building2 className="h-10 w-10" strokeWidth={1.5} />
+                </div>
               )}
               <div className="p-4">
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="font-semibold text-slate-800">{loc.nombre}</h3>
                   <Badge color={loc.activa ? "green" : "red"}>{loc.activa ? "Activa" : "Inactiva"}</Badge>
                 </div>
-                <p className="mt-1 text-sm text-slate-500">
-                  📍 {loc.direccion}, {loc.ciudad}
+                <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-500">
+                  <MapPin className="h-3.5 w-3.5 shrink-0" strokeWidth={2} /> {loc.direccion}, {loc.ciudad}
                 </p>
-                <p className="text-sm text-slate-500">📞 {loc.telefono}</p>
-                {loc.horario && <p className="text-sm text-slate-500">🕒 {loc.horario}</p>}
+                <p className="flex items-center gap-1.5 text-sm text-slate-500">
+                  <Phone className="h-3.5 w-3.5 shrink-0" strokeWidth={2} /> {loc.telefono}
+                </p>
+                {loc.horario && (
+                  <p className="flex items-center gap-1.5 text-sm text-slate-500">
+                    <Clock className="h-3.5 w-3.5 shrink-0" strokeWidth={2} /> {loc.horario}
+                  </p>
+                )}
                 {loc.latitud != null && loc.longitud != null && (
                   <a
-                    className="mt-1 inline-block text-xs text-brand-600 hover:underline"
+                    className="mt-1 inline-flex items-center gap-1 text-xs text-brand-600 hover:underline"
                     href={`https://www.google.com/maps?q=${loc.latitud},${loc.longitud}`}
                     target="_blank"
                     rel="noreferrer"
                   >
-                    Ver en el mapa →
+                    Abrir en Google Maps <ExternalLink className="h-3 w-3" strokeWidth={2} />
                   </a>
                 )}
                 <div className="mt-3 flex items-center gap-2">

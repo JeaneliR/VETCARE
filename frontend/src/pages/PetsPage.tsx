@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { PawPrint } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import PageHeader from "../components/PageHeader";
 import Button from "../components/Button";
@@ -179,7 +180,7 @@ export default function PetsPage() {
       {loading ? (
         <Spinner />
       ) : pets.length === 0 ? (
-        <EmptyState icon="🐾" title="No hay mascotas registradas" description="Registra la primera mascota con el botón de arriba." />
+        <EmptyState icon={PawPrint} title="No hay mascotas registradas" description="Registra la primera mascota con el botón de arriba." />
       ) : (
         <DataTable
           columns={columns}

@@ -4,7 +4,24 @@ import { Link } from "react-router-dom";
 import StarRating from "../../components/StarRating";
 import Spinner from "../../components/Spinner";
 import AnimatedPets from "../../components/public/AnimatedPets";
-import PetCursor from "../../components/PetCursor";
+import PetIllustration from "../../components/public/PetIllustration";
+import {
+  MapPin,
+  Phone,
+  Clock,
+  Building2,
+  PawPrint,
+  Calendar,
+  Syringe,
+  Stethoscope,
+  Scissors,
+  MessageCircle,
+  Heart,
+  Check,
+  Mail,
+  PartyPopper,
+  Lock,
+} from "lucide-react";
 import { getErrorMessage } from "../../services/api";
 import { locationsService } from "../../services/locations.service";
 import { reviewsService } from "../../services/reviews.service";
@@ -20,15 +37,10 @@ function buildWhatsappLink(message: string) {
 const DEFAULT_WHATSAPP_MESSAGE =
   "¡Hola VetCare! Quisiera agendar una cita para mi mascota.";
 
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1450778869180-41d0601e046e?auto=format&fit=crop&w=1400&q=85";
-
-const CONTACT_IMAGE =
-  "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=900&q=85";
 
 const services = [
   {
-    icon: "🐾",
+    icon: PawPrint,
     title: "Ficha de tu mascota",
     description:
       "Su información, historial y visitas organizados en un solo lugar.",
@@ -38,7 +50,7 @@ const services = [
       "hover:bg-brand-50 hover:border-brand-200 hover:shadow-brand-900/5",
   },
   {
-    icon: "📅",
+    icon: Calendar,
     title: "Citas y consultas",
     description:
       "Agenda una consulta con el especialista y la sede que prefieras.",
@@ -48,7 +60,7 @@ const services = [
       "hover:bg-ocean-50 hover:border-ocean-200 hover:shadow-ocean-900/5",
   },
   {
-    icon: "💉",
+    icon: Syringe,
     title: "Vacunación",
     description:
       "Controla sus vacunas y mantén al día sus próximas dosis.",
@@ -58,7 +70,7 @@ const services = [
       "hover:bg-brand-50 hover:border-brand-200 hover:shadow-brand-900/5",
   },
   {
-    icon: "🩺",
+    icon: Stethoscope,
     title: "Tratamientos",
     description:
       "Seguimiento de diagnósticos y cuidados durante su recuperación.",
@@ -68,7 +80,7 @@ const services = [
       "hover:bg-ocean-50 hover:border-ocean-200 hover:shadow-ocean-900/5",
   },
   {
-    icon: "✂️",
+    icon: Scissors,
     title: "Baño y corte",
     description:
       "Baño, corte, deslanado y cuidado para que luzca genial.",
@@ -78,7 +90,7 @@ const services = [
       "hover:bg-brand-50 hover:border-brand-200 hover:shadow-brand-900/5",
   },
   {
-    icon: "📍",
+    icon: MapPin,
     title: "Varias sedes",
     description:
       "Encuentra un centro veterinario cerca de donde te encuentres.",
@@ -200,14 +212,12 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen overflow-hidden bg-white font-sans text-slate-800">
-      <PetCursor />
-
       {/* Navegación */}
       <header className="sticky top-0 z-40 border-b border-brand-100/80 bg-white/95 shadow-sm backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <a href="#inicio" className="flex shrink-0 items-center gap-2">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-100 text-2xl">
-              🐾
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-100 text-brand-700">
+              <PawPrint className="h-6 w-6" strokeWidth={2} />
             </span>
             <span>
               <span className="block text-2xl font-black tracking-tight text-slate-900">
@@ -237,7 +247,7 @@ export default function HomePage() {
             rel="noreferrer"
             className="inline-flex shrink-0 items-center gap-2 rounded-full bg-brand-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-brand-200 transition hover:-translate-y-0.5 hover:bg-brand-700 sm:px-5"
           >
-            <span>💬</span>
+            <MessageCircle className="h-4 w-4" strokeWidth={2} />
             <span className="hidden sm:inline">Agendar por WhatsApp</span>
             <span className="sm:hidden">Agendar</span>
           </a>
@@ -253,7 +263,7 @@ export default function HomePage() {
           <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 md:py-16 lg:grid-cols-2 lg:px-8 lg:py-20">
             <div className="relative z-10">
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-100 bg-white px-4 py-2 text-sm font-bold text-brand-700 shadow-sm">
-                <span>💚</span>
+                <Heart className="h-4 w-4" strokeWidth={2} />
                 Atención veterinaria integral
               </div>
 
@@ -274,7 +284,7 @@ export default function HomePage() {
                   rel="noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-4 font-bold text-white shadow-lg shadow-brand-200 transition hover:-translate-y-1 hover:bg-brand-700"
                 >
-                  <span>💬</span>
+                  <MessageCircle className="h-4 w-4" strokeWidth={2} />
                   Agendar una cita
                 </a>
 
@@ -282,14 +292,14 @@ export default function HomePage() {
                   href="#sedes"
                   className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-brand-100 bg-white px-6 py-4 font-bold text-brand-800 transition hover:border-brand-300 hover:bg-brand-50"
                 >
-                  📍 Ver nuestras sedes
+                  <MapPin className="h-4 w-4" strokeWidth={2} /> Ver nuestras sedes
                 </a>
               </div>
 
               <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-slate-600">
-                <span>✓ Atención cercana</span>
-                <span>✓ Cuidado integral</span>
-                <span>✓ Amor por los animales</span>
+                <span className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-brand-600" strokeWidth={2.5} /> Atención cercana</span>
+                <span className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-brand-600" strokeWidth={2.5} /> Cuidado integral</span>
+                <span className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-brand-600" strokeWidth={2.5} /> Amor por los animales</span>
               </div>
             </div>
 
@@ -305,31 +315,29 @@ export default function HomePage() {
               <div className="absolute -bottom-6 -left-5 h-36 w-36 rounded-full bg-brand-200/70 blur-2xl" />
 
               <div className="relative rounded-[2rem] border-8 border-white shadow-2xl shadow-brand-900/10">
-                <img
-                  src={HERO_IMAGE}
-                  alt="Perro y gato disfrutando juntos"
+                <PetIllustration
+                  variant="duo"
                   className="h-[340px] w-full rounded-[1.5rem] object-cover sm:h-[430px] lg:h-[500px]"
-                  fetchPriority="high"
                 />
 
                 <div className="absolute -bottom-5 left-4 right-4 rounded-2xl border border-white/80 bg-white/95 p-4 shadow-xl backdrop-blur sm:bottom-6 sm:left-6 sm:right-auto sm:max-w-xs">
                   <div className="flex items-center gap-3">
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-ocean-100 text-2xl">
-                      🐶
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-ocean-100 text-ocean-700">
+                      <PawPrint className="h-6 w-6" strokeWidth={2} />
                     </span>
                     <div>
                       <p className="font-extrabold text-slate-900">
                         Pequeños amigos
                       </p>
                       <p className="text-sm text-slate-500">
-                        Merecen grandes cuidados 💚
+                        Merecen grandes cuidados <Heart className="inline h-3.5 w-3.5 text-brand-500" strokeWidth={2} />
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="absolute right-4 top-4 rounded-full bg-white/95 px-4 py-2 text-sm font-bold text-brand-700 shadow-lg sm:right-6 sm:top-6">
-                  🐾 ¡Bienvenidos!
+                <div className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full bg-white/95 px-4 py-2 text-sm font-bold text-brand-700 shadow-lg sm:right-6 sm:top-6">
+                  <PawPrint className="h-4 w-4" strokeWidth={2} /> ¡Bienvenidos!
                 </div>
               </div>
             </div>
@@ -363,9 +371,9 @@ export default function HomePage() {
                   className={`group rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl ${service.hoverStyle}`}
                 >
                   <div
-                    className={`flex h-14 w-14 items-center justify-center rounded-2xl ${service.color} text-3xl transition group-hover:rotate-3`}
+                    className={`flex h-14 w-14 items-center justify-center rounded-2xl ${service.color} ${service.accent} transition group-hover:rotate-3`}
                   >
-                    {service.icon}
+                    <service.icon className="h-7 w-7" strokeWidth={2} />
                   </div>
                   <h3 className={`mt-5 text-lg font-extrabold ${service.accent}`}>
                     {service.title}
@@ -398,7 +406,7 @@ export default function HomePage() {
                 </p>
               </div>
               <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-brand-700 shadow-sm">
-                📍 {locations.length}{" "}
+                <MapPin className="h-4 w-4" strokeWidth={2} /> {locations.length}{" "}
                 {locations.length === 1
                   ? "sede disponible"
                   : "sedes disponibles"}
@@ -411,7 +419,7 @@ export default function HomePage() {
               </div>
             ) : locations.length === 0 ? (
               <div className="rounded-3xl border border-brand-100 bg-white p-10 text-center shadow-sm">
-                <span className="text-5xl">🏥</span>
+                <Building2 className="mx-auto h-12 w-12 text-brand-400" strokeWidth={1.5} />
                 <h3 className="mt-4 text-xl font-extrabold text-slate-800">
                   Pronto estaremos más cerca
                 </h3>
@@ -433,9 +441,16 @@ export default function HomePage() {
                         loading="lazy"
                         className="h-52 w-full object-cover"
                       />
+                    ) : location.latitud != null && location.longitud != null ? (
+                      <iframe
+                        title={`Mapa de ${location.nombre}`}
+                        src={`https://maps.google.com/maps?q=${location.latitud},${location.longitud}&z=15&output=embed`}
+                        loading="lazy"
+                        className="h-52 w-full border-0"
+                      />
                     ) : (
-                      <div className="flex h-44 items-center justify-center bg-gradient-to-br from-brand-100 to-ocean-100 text-6xl">
-                        🏥
+                      <div className="flex h-44 items-center justify-center bg-gradient-to-br from-brand-100 to-ocean-100 text-brand-500">
+                        <Building2 className="h-12 w-12" strokeWidth={1.5} />
                       </div>
                     )}
 
@@ -451,18 +466,18 @@ export default function HomePage() {
 
                       <div className="mt-4 space-y-3 text-sm text-slate-600">
                         <p className="flex items-start gap-2">
-                          <span>📍</span>
+                          <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" strokeWidth={2} />
                           <span>
                             {location.direccion}, {location.ciudad}
                           </span>
                         </p>
                         <p className="flex items-center gap-2">
-                          <span>📞</span>
+                          <Phone className="h-4 w-4 shrink-0 text-brand-500" strokeWidth={2} />
                           {location.telefono}
                         </p>
                         {location.horario && (
                           <p className="flex items-start gap-2">
-                            <span>🕒</span>
+                            <Clock className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" strokeWidth={2} />
                             <span>{location.horario}</span>
                           </p>
                         )}
@@ -528,7 +543,7 @@ export default function HomePage() {
 
             {!loading && visibleReviews.length === 0 ? (
               <div className="mt-10 rounded-3xl border border-dashed border-brand-200 bg-brand-50/60 px-6 py-12 text-center">
-                <span className="text-5xl">💌</span>
+                <Mail className="mx-auto h-12 w-12 text-brand-400" strokeWidth={1.5} />
                 <p className="mt-4 font-bold text-slate-700">
                   Todavía no hay reseñas para mostrar.
                 </p>
@@ -544,8 +559,8 @@ export default function HomePage() {
                     className="rounded-3xl border border-slate-100 bg-slate-50/70 p-6 shadow-sm transition hover:-translate-y-1 hover:bg-white hover:shadow-lg"
                   >
                     <div className="flex items-center justify-between gap-3">
-                      <span className="text-2xl" aria-label="Reseña de cliente">
-                        💬
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-50 text-brand-600" aria-label="Reseña de cliente">
+                        <MessageCircle className="h-5 w-5" strokeWidth={2} />
                       </span>
                       <StarRating value={review.calificacion} />
                     </div>
@@ -559,14 +574,14 @@ export default function HomePage() {
                         {reviewAuthorName(review)}
                       </p>
                       <p className="mt-1 text-sm text-brand-700">
-                        📍 {review.sede?.nombre || "Sede VetCare"}
+                        <MapPin className="inline h-3.5 w-3.5" strokeWidth={2} /> {review.sede?.nombre || "Sede VetCare"}
                       </p>
                     </div>
 
                     {review.respuestaAdmin && (
                       <div className="mt-4 rounded-2xl bg-brand-50 p-4 text-sm leading-6 text-brand-800">
-                        <span className="font-extrabold">
-                          💚 Respuesta de VetCare
+                        <span className="inline-flex items-center gap-1.5 font-extrabold">
+                          <Heart className="h-4 w-4" strokeWidth={2} /> Respuesta de VetCare
                         </span>
                         <p className="mt-1">{review.respuestaAdmin}</p>
                       </div>
@@ -579,8 +594,8 @@ export default function HomePage() {
             {/* Formulario de reseñas */}
             <div className="mt-12 grid gap-8 rounded-[2rem] border border-brand-100 bg-gradient-to-br from-brand-50 to-ocean-50 p-6 sm:p-8 lg:grid-cols-[0.8fr_1.2fr] lg:p-10">
               <div>
-                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-3xl shadow-sm">
-                  💚
+                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-brand-600 shadow-sm">
+                  <Heart className="h-7 w-7" strokeWidth={2} />
                 </span>
                 <h3 className="mt-5 text-2xl font-black text-slate-900">
                   ¡Cuéntanos tu experiencia!
@@ -590,7 +605,7 @@ export default function HomePage() {
                   visita y ayuda a otras familias con mascotas.
                 </p>
                 <p className="mt-4 text-sm font-semibold text-brand-700">
-                  🐾 No necesitas una cuenta para dejar tu reseña.
+                  <PawPrint className="inline h-4 w-4" strokeWidth={2} /> No necesitas una cuenta para dejar tu reseña.
                 </p>
               </div>
 
@@ -600,7 +615,7 @@ export default function HomePage() {
                     role="status"
                     className="rounded-2xl bg-brand-50 p-6 text-center text-brand-800"
                   >
-                    <span className="text-4xl">🎉</span>
+                    <PartyPopper className="mx-auto h-10 w-10 text-brand-600" strokeWidth={1.75} />
                     <h4 className="mt-3 text-lg font-extrabold">
                       ¡Muchas gracias!
                     </h4>
@@ -733,7 +748,7 @@ export default function HomePage() {
           <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold text-brand-100">
-                💌 Estamos para ayudarte
+                <Mail className="h-4 w-4" strokeWidth={2} /> Estamos para ayudarte
               </span>
 
               <h2 className="mt-5 text-3xl font-black leading-tight sm:text-4xl">
@@ -746,22 +761,20 @@ export default function HomePage() {
               </p>
 
               <div className="relative mt-8 max-w-lg overflow-hidden rounded-[2rem] border-4 border-white/20 shadow-2xl">
-                <img
-                  src={CONTACT_IMAGE}
-                  alt="Perro y gato acompañándose"
-                  loading="lazy"
+                <PetIllustration
+                  variant="solo"
                   className="h-64 w-full object-cover sm:h-80"
                 />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 to-transparent p-5 pt-14">
-                  <p className="text-lg font-extrabold">
-                    Más cariño, más salud, más colitas felices. 🐾
+                  <p className="flex items-center gap-2 text-lg font-extrabold">
+                    <PawPrint className="h-5 w-5 shrink-0" strokeWidth={2} /> Más cariño, más salud, más colitas felices.
                   </p>
                 </div>
               </div>
 
               <div className="mt-7 flex flex-col gap-3 text-sm sm:flex-row sm:flex-wrap sm:gap-5">
-                <span>📞 998 236 732</span>
-                <span>✉️ contacto@vetcare.pe</span>
+                <span className="inline-flex items-center gap-1.5"><Phone className="h-4 w-4" strokeWidth={2} /> 998 236 732</span>
+                <span className="inline-flex items-center gap-1.5"><Mail className="h-4 w-4" strokeWidth={2} /> contacto@vetcare.pe</span>
               </div>
 
               <a
@@ -770,7 +783,7 @@ export default function HomePage() {
                 rel="noreferrer"
                 className="mt-7 inline-flex items-center gap-2 rounded-full bg-brand-500 px-6 py-4 font-extrabold text-white shadow-lg transition hover:-translate-y-1 hover:bg-brand-400"
               >
-                💬 Escribir por WhatsApp
+                <MessageCircle className="h-4 w-4" strokeWidth={2} /> Escribir por WhatsApp
               </a>
             </div>
 
@@ -865,7 +878,7 @@ export default function HomePage() {
                   type="submit"
                   className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-4 font-extrabold text-white shadow-lg shadow-brand-100 transition hover:-translate-y-0.5 hover:bg-brand-700"
                 >
-                  💬 Enviar por WhatsApp
+                  <MessageCircle className="h-4 w-4" strokeWidth={2} /> Enviar por WhatsApp
                 </button>
               </div>
             </form>
@@ -877,8 +890,8 @@ export default function HomePage() {
       <footer className="bg-slate-950 px-4 py-8 text-slate-300 sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <a href="#inicio" className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-900 text-2xl">
-              🐾
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-900 text-brand-200">
+              <PawPrint className="h-6 w-6" strokeWidth={2} />
             </span>
             <span>
               <span className="block text-xl font-black text-white">
@@ -899,7 +912,7 @@ export default function HomePage() {
             to="/app/login"
             className="inline-flex items-center gap-2 text-sm font-semibold text-brand-300 transition hover:text-white"
           >
-            🔐 Acceso administrativo
+            <Lock className="h-3.5 w-3.5" strokeWidth={2} /> Acceso administrativo
           </Link>
         </div>
       </footer>

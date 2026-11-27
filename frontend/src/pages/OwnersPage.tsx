@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
+import { User } from "lucide-react";
 import { Link } from "react-router-dom";
 import PageHeader from "../components/PageHeader";
 import Button from "../components/Button";
@@ -143,7 +144,7 @@ export default function OwnersPage() {
       {loading ? (
         <Spinner />
       ) : owners.length === 0 ? (
-        <EmptyState icon="👤" title="Aún no hay dueños registrados" description="Crea el primero con el botón de arriba." />
+        <EmptyState icon={User} title="Aún no hay dueños registrados" description="Crea el primero con el botón de arriba." />
       ) : (
         <DataTable
           columns={columns}
