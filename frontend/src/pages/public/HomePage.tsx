@@ -32,48 +32,60 @@ const services = [
     title: "Ficha de tu mascota",
     description:
       "Su información, historial y visitas organizados en un solo lugar.",
-    color: "bg-emerald-100",
-    accent: "text-emerald-700",
+    color: "bg-brand-100",
+    accent: "text-brand-700",
+    hoverStyle:
+      "hover:bg-brand-50 hover:border-brand-200 hover:shadow-brand-900/5",
   },
   {
     icon: "📅",
     title: "Citas y consultas",
     description:
       "Agenda una consulta con el especialista y la sede que prefieras.",
-    color: "bg-sky-100",
-    accent: "text-sky-700",
+    color: "bg-ocean-100",
+    accent: "text-ocean-700",
+    hoverStyle:
+      "hover:bg-ocean-50 hover:border-ocean-200 hover:shadow-ocean-900/5",
   },
   {
     icon: "💉",
     title: "Vacunación",
     description:
       "Controla sus vacunas y mantén al día sus próximas dosis.",
-    color: "bg-rose-100",
-    accent: "text-rose-700",
+    color: "bg-brand-100",
+    accent: "text-brand-700",
+    hoverStyle:
+      "hover:bg-brand-50 hover:border-brand-200 hover:shadow-brand-900/5",
   },
   {
     icon: "🩺",
     title: "Tratamientos",
     description:
       "Seguimiento de diagnósticos y cuidados durante su recuperación.",
-    color: "bg-violet-100",
-    accent: "text-violet-700",
+    color: "bg-ocean-100",
+    accent: "text-ocean-700",
+    hoverStyle:
+      "hover:bg-ocean-50 hover:border-ocean-200 hover:shadow-ocean-900/5",
   },
   {
     icon: "✂️",
     title: "Baño y corte",
     description:
       "Baño, corte, deslanado y cuidado para que luzca genial.",
-    color: "bg-orange-100",
-    accent: "text-orange-700",
+    color: "bg-brand-100",
+    accent: "text-brand-700",
+    hoverStyle:
+      "hover:bg-brand-50 hover:border-brand-200 hover:shadow-brand-900/5",
   },
   {
     icon: "📍",
     title: "Varias sedes",
     description:
       "Encuentra un centro veterinario cerca de donde te encuentres.",
-    color: "bg-teal-100",
-    accent: "text-teal-700",
+    color: "bg-ocean-100",
+    accent: "text-ocean-700",
+    hoverStyle:
+      "hover:bg-ocean-50 hover:border-ocean-200 hover:shadow-ocean-900/5",
   },
 ];
 
@@ -191,15 +203,15 @@ export default function HomePage() {
       <PetCursor />
 
       {/* Navegación */}
-      <header className="sticky top-0 z-40 border-b border-teal-100/80 bg-white/95 shadow-sm backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-brand-100/80 bg-white/95 shadow-sm backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <a href="#inicio" className="flex shrink-0 items-center gap-2">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-100 text-2xl">
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-100 text-2xl">
               🐾
             </span>
             <span>
               <span className="block text-2xl font-black tracking-tight text-slate-900">
-                Vet<span className="text-teal-600">Care</span>
+                Vet<span className="text-brand-600">Care</span>
               </span>
               <span className="hidden text-xs font-medium text-slate-500 sm:block">
                 Salud y bienestar para tu mascota
@@ -212,7 +224,7 @@ export default function HomePage() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm font-semibold text-slate-600 transition hover:text-teal-600"
+                className="text-sm font-semibold text-slate-600 transition hover:text-brand-600"
               >
                 {link.label}
               </a>
@@ -223,7 +235,7 @@ export default function HomePage() {
             href={buildWhatsappLink(DEFAULT_WHATSAPP_MESSAGE)}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-200 transition hover:-translate-y-0.5 hover:bg-emerald-700 sm:px-5"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-brand-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-brand-200 transition hover:-translate-y-0.5 hover:bg-brand-700 sm:px-5"
           >
             <span>💬</span>
             <span className="hidden sm:inline">Agendar por WhatsApp</span>
@@ -233,21 +245,21 @@ export default function HomePage() {
       </header>
 
       <main>
-        {/* Portada principal con fotografía y mascotas animadas */}
+        {/* Portada principal */}
         <section
           id="inicio"
-          className="relative isolate scroll-mt-20 overflow-hidden bg-gradient-to-br from-cyan-50 via-white to-emerald-50"
+          className="relative isolate scroll-mt-20 overflow-hidden bg-gradient-to-br from-ocean-50 via-white to-brand-50"
         >
           <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 md:py-16 lg:grid-cols-2 lg:px-8 lg:py-20">
             <div className="relative z-10">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-teal-100 bg-white px-4 py-2 text-sm font-bold text-teal-700 shadow-sm">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-100 bg-white px-4 py-2 text-sm font-bold text-brand-700 shadow-sm">
                 <span>💚</span>
                 Atención veterinaria integral
               </div>
 
               <h1 className="max-w-2xl text-4xl font-black leading-tight tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
                 Cuidamos a tu mejor amigo como{" "}
-                <span className="text-teal-600">parte de la familia.</span>
+                <span className="text-brand-600">parte de la familia.</span>
               </h1>
 
               <p className="mt-6 max-w-xl text-base leading-7 text-slate-600 sm:text-lg">
@@ -260,7 +272,7 @@ export default function HomePage() {
                   href={buildWhatsappLink(DEFAULT_WHATSAPP_MESSAGE)}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-4 font-bold text-white shadow-lg shadow-emerald-200 transition hover:-translate-y-1 hover:bg-emerald-700"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-4 font-bold text-white shadow-lg shadow-brand-200 transition hover:-translate-y-1 hover:bg-brand-700"
                 >
                   <span>💬</span>
                   Agendar una cita
@@ -268,7 +280,7 @@ export default function HomePage() {
 
                 <a
                   href="#sedes"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-teal-100 bg-white px-6 py-4 font-bold text-teal-800 transition hover:border-teal-300 hover:bg-teal-50"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-brand-100 bg-white px-6 py-4 font-bold text-brand-800 transition hover:border-brand-300 hover:bg-brand-50"
                 >
                   📍 Ver nuestras sedes
                 </a>
@@ -289,10 +301,10 @@ export default function HomePage() {
                 <AnimatedPets />
               </div>
 
-              <div className="absolute -right-5 -top-5 h-28 w-28 rounded-full bg-yellow-200/70 blur-2xl" />
-              <div className="absolute -bottom-6 -left-5 h-36 w-36 rounded-full bg-teal-200/70 blur-2xl" />
+              <div className="absolute -right-5 -top-5 h-28 w-28 rounded-full bg-ocean-200/70 blur-2xl" />
+              <div className="absolute -bottom-6 -left-5 h-36 w-36 rounded-full bg-brand-200/70 blur-2xl" />
 
-              <div className="relative rounded-[2rem] border-8 border-white shadow-2xl shadow-teal-900/10">
+              <div className="relative rounded-[2rem] border-8 border-white shadow-2xl shadow-brand-900/10">
                 <img
                   src={HERO_IMAGE}
                   alt="Perro y gato disfrutando juntos"
@@ -302,7 +314,7 @@ export default function HomePage() {
 
                 <div className="absolute -bottom-5 left-4 right-4 rounded-2xl border border-white/80 bg-white/95 p-4 shadow-xl backdrop-blur sm:bottom-6 sm:left-6 sm:right-auto sm:max-w-xs">
                   <div className="flex items-center gap-3">
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-100 text-2xl">
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-ocean-100 text-2xl">
                       🐶
                     </span>
                     <div>
@@ -316,14 +328,14 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="absolute right-4 top-4 rounded-full bg-white/95 px-4 py-2 text-sm font-bold text-teal-700 shadow-lg sm:right-6 sm:top-6">
+                <div className="absolute right-4 top-4 rounded-full bg-white/95 px-4 py-2 text-sm font-bold text-brand-700 shadow-lg sm:right-6 sm:top-6">
                   🐾 ¡Bienvenidos!
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="pointer-events-none absolute -bottom-12 -left-10 h-32 w-32 rounded-full bg-yellow-100/70" />
+          <div className="pointer-events-none absolute -bottom-12 -left-10 h-32 w-32 rounded-full bg-ocean-100/70" />
         </section>
 
         {/* Servicios */}
@@ -333,7 +345,7 @@ export default function HomePage() {
         >
           <div className="mx-auto max-w-7xl">
             <div className="mx-auto max-w-2xl text-center">
-              <span className="text-sm font-extrabold uppercase tracking-[0.2em] text-teal-600">
+              <span className="text-sm font-extrabold uppercase tracking-[0.2em] text-brand-600">
                 Todo para su bienestar
               </span>
               <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
@@ -348,7 +360,7 @@ export default function HomePage() {
               {services.map((service) => (
                 <article
                   key={service.title}
-                  className="group rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-teal-100 hover:shadow-xl hover:shadow-teal-900/5"
+                  className={`group rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl ${service.hoverStyle}`}
                 >
                   <div
                     className={`flex h-14 w-14 items-center justify-center rounded-2xl ${service.color} text-3xl transition group-hover:rotate-3`}
@@ -370,12 +382,12 @@ export default function HomePage() {
         {/* Sedes */}
         <section
           id="sedes"
-          className="scroll-mt-24 bg-gradient-to-br from-cyan-50 to-teal-50 px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
+          className="scroll-mt-24 bg-gradient-to-br from-ocean-50 to-brand-50 px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
         >
           <div className="mx-auto max-w-7xl">
             <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>
-                <span className="text-sm font-extrabold uppercase tracking-[0.2em] text-teal-600">
+                <span className="text-sm font-extrabold uppercase tracking-[0.2em] text-brand-600">
                   Estamos cerca de ti
                 </span>
                 <h2 className="mt-3 text-3xl font-black text-slate-900 sm:text-4xl">
@@ -385,7 +397,7 @@ export default function HomePage() {
                   Encuentra el lugar ideal para cuidar a tu mejor amigo.
                 </p>
               </div>
-              <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-teal-700 shadow-sm">
+              <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-brand-700 shadow-sm">
                 📍 {locations.length}{" "}
                 {locations.length === 1
                   ? "sede disponible"
@@ -398,7 +410,7 @@ export default function HomePage() {
                 <Spinner />
               </div>
             ) : locations.length === 0 ? (
-              <div className="rounded-3xl border border-teal-100 bg-white p-10 text-center shadow-sm">
+              <div className="rounded-3xl border border-brand-100 bg-white p-10 text-center shadow-sm">
                 <span className="text-5xl">🏥</span>
                 <h3 className="mt-4 text-xl font-extrabold text-slate-800">
                   Pronto estaremos más cerca
@@ -422,7 +434,7 @@ export default function HomePage() {
                         className="h-52 w-full object-cover"
                       />
                     ) : (
-                      <div className="flex h-44 items-center justify-center bg-gradient-to-br from-teal-100 to-sky-100 text-6xl">
+                      <div className="flex h-44 items-center justify-center bg-gradient-to-br from-brand-100 to-ocean-100 text-6xl">
                         🏥
                       </div>
                     )}
@@ -432,7 +444,7 @@ export default function HomePage() {
                         <h3 className="text-xl font-extrabold text-slate-900">
                           {location.nombre}
                         </h3>
-                        <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
+                        <span className="rounded-full bg-brand-100 px-3 py-1 text-xs font-bold text-brand-700">
                           Activa
                         </span>
                       </div>
@@ -482,7 +494,7 @@ export default function HomePage() {
           <div className="mx-auto max-w-7xl">
             <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
               <div>
-                <span className="text-sm font-extrabold uppercase tracking-[0.2em] text-teal-600">
+                <span className="text-sm font-extrabold uppercase tracking-[0.2em] text-brand-600">
                   Experiencias reales
                 </span>
                 <h2 className="mt-3 text-3xl font-black text-slate-900 sm:text-4xl">
@@ -502,7 +514,7 @@ export default function HomePage() {
                     )
                   }
                   aria-label="Filtrar reseñas por sede"
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:max-w-xs"
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100 sm:max-w-xs"
                 >
                   <option value="">Reseñas de todas las sedes</option>
                   {locations.map((location) => (
@@ -515,7 +527,7 @@ export default function HomePage() {
             </div>
 
             {!loading && visibleReviews.length === 0 ? (
-              <div className="mt-10 rounded-3xl border border-dashed border-teal-200 bg-teal-50/60 px-6 py-12 text-center">
+              <div className="mt-10 rounded-3xl border border-dashed border-brand-200 bg-brand-50/60 px-6 py-12 text-center">
                 <span className="text-5xl">💌</span>
                 <p className="mt-4 font-bold text-slate-700">
                   Todavía no hay reseñas para mostrar.
@@ -546,13 +558,13 @@ export default function HomePage() {
                       <p className="font-extrabold text-slate-900">
                         {reviewAuthorName(review)}
                       </p>
-                      <p className="mt-1 text-sm text-teal-700">
+                      <p className="mt-1 text-sm text-brand-700">
                         📍 {review.sede?.nombre || "Sede VetCare"}
                       </p>
                     </div>
 
                     {review.respuestaAdmin && (
-                      <div className="mt-4 rounded-2xl bg-teal-50 p-4 text-sm leading-6 text-teal-800">
+                      <div className="mt-4 rounded-2xl bg-brand-50 p-4 text-sm leading-6 text-brand-800">
                         <span className="font-extrabold">
                           💚 Respuesta de VetCare
                         </span>
@@ -565,7 +577,7 @@ export default function HomePage() {
             )}
 
             {/* Formulario de reseñas */}
-            <div className="mt-12 grid gap-8 rounded-[2rem] border border-teal-100 bg-gradient-to-br from-teal-50 to-cyan-50 p-6 sm:p-8 lg:grid-cols-[0.8fr_1.2fr] lg:p-10">
+            <div className="mt-12 grid gap-8 rounded-[2rem] border border-brand-100 bg-gradient-to-br from-brand-50 to-ocean-50 p-6 sm:p-8 lg:grid-cols-[0.8fr_1.2fr] lg:p-10">
               <div>
                 <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-3xl shadow-sm">
                   💚
@@ -577,7 +589,7 @@ export default function HomePage() {
                   Tu opinión nos ayuda a seguir mejorando. Comparte cómo fue tu
                   visita y ayuda a otras familias con mascotas.
                 </p>
-                <p className="mt-4 text-sm font-semibold text-teal-700">
+                <p className="mt-4 text-sm font-semibold text-brand-700">
                   🐾 No necesitas una cuenta para dejar tu reseña.
                 </p>
               </div>
@@ -586,7 +598,7 @@ export default function HomePage() {
                 {reviewSuccess ? (
                   <div
                     role="status"
-                    className="rounded-2xl bg-emerald-50 p-6 text-center text-emerald-800"
+                    className="rounded-2xl bg-brand-50 p-6 text-center text-brand-800"
                   >
                     <span className="text-4xl">🎉</span>
                     <h4 className="mt-3 text-lg font-extrabold">
@@ -598,7 +610,7 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={() => setReviewSuccess(false)}
-                      className="mt-4 rounded-full bg-emerald-600 px-5 py-2 font-bold text-white transition hover:bg-emerald-700"
+                      className="mt-4 rounded-full bg-brand-600 px-5 py-2 font-bold text-white transition hover:bg-brand-700"
                     >
                       Escribir otra reseña
                     </button>
@@ -611,7 +623,7 @@ export default function HomePage() {
                     {reviewError && (
                       <p
                         role="alert"
-                        className="rounded-2xl bg-rose-50 p-4 text-sm font-medium text-rose-700"
+                        className="rounded-2xl bg-red-50 p-4 text-sm font-medium text-red-700"
                       >
                         {reviewError}
                       </p>
@@ -641,7 +653,7 @@ export default function HomePage() {
                           required
                           value={reviewName}
                           onChange={(event) => setReviewName(event.target.value)}
-                          className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-100"
+                          className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100"
                           placeholder="Ej. María Torres"
                         />
                       </div>
@@ -662,7 +674,7 @@ export default function HomePage() {
                               event.target.value ? Number(event.target.value) : "",
                             )
                           }
-                          className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-100"
+                          className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100"
                         >
                           <option value="" disabled>
                             Selecciona una sede
@@ -692,7 +704,7 @@ export default function HomePage() {
                           setReviewComment(event.target.value)
                         }
                         rows={4}
-                        className="w-full resize-y rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-100"
+                        className="w-full resize-y rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100"
                         placeholder="¿Cómo fue tu experiencia en VetCare?"
                       />
                     </div>
@@ -700,7 +712,7 @@ export default function HomePage() {
                     <button
                       type="submit"
                       disabled={reviewSubmitting}
-                      className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-3 font-bold text-white shadow-md shadow-emerald-100 transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 font-bold text-white shadow-md shadow-brand-100 transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {reviewSubmitting
                         ? "Enviando reseña..."
@@ -716,11 +728,11 @@ export default function HomePage() {
         {/* Contacto */}
         <section
           id="contacto"
-          className="scroll-mt-24 bg-gradient-to-br from-teal-900 via-teal-800 to-cyan-900 px-4 py-16 text-white sm:px-6 lg:px-8 lg:py-20"
+          className="scroll-mt-24 bg-gradient-to-br from-brand-900 via-brand-800 to-ocean-900 px-4 py-16 text-white sm:px-6 lg:px-8 lg:py-20"
         >
           <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2">
             <div>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold text-teal-100">
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold text-brand-100">
                 💌 Estamos para ayudarte
               </span>
 
@@ -728,7 +740,7 @@ export default function HomePage() {
                 Tu mascota merece lo mejor. ¡Hablemos!
               </h2>
 
-              <p className="mt-5 max-w-xl leading-7 text-teal-50/90">
+              <p className="mt-5 max-w-xl leading-7 text-brand-50/90">
                 Cuéntanos qué necesita tu compañero. Te ayudaremos a encontrar
                 la mejor manera de cuidarlo.
               </p>
@@ -756,7 +768,7 @@ export default function HomePage() {
                 href={buildWhatsappLink(DEFAULT_WHATSAPP_MESSAGE)}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-7 inline-flex items-center gap-2 rounded-full bg-emerald-500 px-6 py-4 font-extrabold text-white shadow-lg transition hover:-translate-y-1 hover:bg-emerald-400"
+                className="mt-7 inline-flex items-center gap-2 rounded-full bg-brand-500 px-6 py-4 font-extrabold text-white shadow-lg transition hover:-translate-y-1 hover:bg-brand-400"
               >
                 💬 Escribir por WhatsApp
               </a>
@@ -768,7 +780,7 @@ export default function HomePage() {
               className="rounded-[2rem] bg-white p-6 text-slate-800 shadow-2xl sm:p-8 lg:p-10"
             >
               <div className="mb-7">
-                <span className="text-sm font-extrabold uppercase tracking-[0.2em] text-teal-600">
+                <span className="text-sm font-extrabold uppercase tracking-[0.2em] text-brand-600">
                   Contáctanos
                 </span>
                 <h3 className="mt-2 text-2xl font-black text-slate-900">
@@ -793,7 +805,7 @@ export default function HomePage() {
                     required
                     value={contactName}
                     onChange={(event) => setContactName(event.target.value)}
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-100"
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100"
                     placeholder="Ej. María Torres"
                   />
                 </div>
@@ -809,17 +821,17 @@ export default function HomePage() {
                     id="contact-pet"
                     value={contactPet}
                     onChange={(event) => setContactPet(event.target.value)}
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-100"
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100"
                     placeholder="Ej. Rocky"
                   />
                 </div>
 
-                <label className="flex cursor-pointer items-start gap-3 rounded-2xl bg-amber-50 p-4 text-sm text-slate-700">
+                <label className="flex cursor-pointer items-start gap-3 rounded-2xl bg-ocean-50 p-4 text-sm text-slate-700">
                   <input
                     type="checkbox"
                     checked={contactExotic}
                     onChange={(event) => setContactExotic(event.target.checked)}
-                    className="mt-0.5 h-4 w-4 accent-teal-600"
+                    className="mt-0.5 h-4 w-4 accent-brand-600"
                   />
                   <span>
                     <span className="block font-bold">
@@ -844,14 +856,14 @@ export default function HomePage() {
                     value={contactMessage}
                     onChange={(event) => setContactMessage(event.target.value)}
                     rows={4}
-                    className="w-full resize-y rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-100"
+                    className="w-full resize-y rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100"
                     placeholder="Cuéntanos qué necesita tu mascota y tu horario preferido."
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-4 font-extrabold text-white shadow-lg shadow-emerald-100 transition hover:-translate-y-0.5 hover:bg-emerald-700"
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-4 font-extrabold text-white shadow-lg shadow-brand-100 transition hover:-translate-y-0.5 hover:bg-brand-700"
                 >
                   💬 Enviar por WhatsApp
                 </button>
@@ -865,12 +877,12 @@ export default function HomePage() {
       <footer className="bg-slate-950 px-4 py-8 text-slate-300 sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <a href="#inicio" className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-900 text-2xl">
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-900 text-2xl">
               🐾
             </span>
             <span>
               <span className="block text-xl font-black text-white">
-                Vet<span className="text-teal-400">Care</span>
+                Vet<span className="text-brand-400">Care</span>
               </span>
               <span className="text-xs text-slate-400">
                 Salud y bienestar para tu mascota
@@ -885,7 +897,7 @@ export default function HomePage() {
 
           <Link
             to="/app/login"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-teal-300 transition hover:text-white"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-brand-300 transition hover:text-white"
           >
             🔐 Acceso administrativo
           </Link>
