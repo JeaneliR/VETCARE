@@ -12,7 +12,10 @@
     "prisma:studio": "prisma studio",
     "seed": "ts-node --transpile-only prisma/seed.ts",
     "test": "jest",
-    "test:ci": "jest --ci --coverage"
+    "test:unit": "jest --testPathPatterns=tests/unit",
+    "test:integration": "jest --testPathPatterns=tests/integration",
+    "test:security": "jest --testPathPatterns=tests/security",
+    "test:ci": "jest --ci --coverage --testPathPatterns=tests/unit"
   },
   "prisma": {
     "seed": "ts-node --transpile-only prisma/seed.ts"

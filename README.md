@@ -131,6 +131,48 @@ npm run dev                   # inicia la app en http://localhost:5173
 
 Con ambos servidores corriendo, abre `http://localhost:5173` en el navegador.
 
+## Pruebas automatizadas (backend)
+
+Hay 3 grupos de pruebas con Jest, en `backend/tests/`:
+
+- **`tests/unit/`** — pruebas unitarias puras (hash de contraseñas, `ApiError`,
+  schemas de Zod). No necesitan base de datos.
+- **`tests/integration/`** — flujo end-to-end real (login → crear dueño →
+  crear mascota → crear cita, más un caso negativo) contra una base de datos
+  PostgreSQL real.
+- **`tests/security/`** — autenticación (token ausente/inválido/expirado),
+  autorización por módulo (RBAC), anti-enumeración de usuarios en el login,
+  que las contraseñas nunca viajen en texto plano, validación de entrada y
+  resistencia a inyección SQL.
+
+Las pruebas de integración y de seguridad necesitan una base de datos de
+prueba aparte (para no tocar tus datos de desarrollo) y la cuenta del seed.
+Una sola vez:
+
+```bash
+cd backend
+psql -U vetcare -h localhost -c "CREATE DATABASE vetcare_test;"
+DATABASE_URL=postgresql://vetcare:vetcare-local@localhost:5432/vetcare_test npx prisma migrate deploy
+DATABASE_URL=postgresql://vetcare:vetcare-local@localhost:5432/vetcare_test npm run seed
+```
+
+(Ajusta usuario/contraseña/puerto en el comando si tu Postgres local no usa
+los valores por defecto de `docker-compose.yml`. Si ya tienes `docker compose
+up -d db` corriendo, usa esos mismos datos de conexión, solo cambiando el
+nombre de la base a `vetcare_test`.)
+
+Y luego, para correr todo:
+
+```bash
+npm test             # todas las suites (unitarias + integración + seguridad)
+npm run test:ci       # igual, con cobertura (lo que corre en GitHub Actions)
+```
+
+`backend/.env.test` ya apunta a `vetcare_test` por defecto — ajústalo si tu
+base de prueba usa otra URL. Las suites de integración/seguridad limpian los
+registros que crean al terminar (`afterAll`), así que puedes correrlas varias
+veces seguidas sin acumular basura.
+
 ## Endpoints principales de la API
 
 Todos bajo el prefijo `/api`. Salvo `POST /auth/login` y los `GET` de `/sedes`
